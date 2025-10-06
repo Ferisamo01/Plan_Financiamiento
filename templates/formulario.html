@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Financiamiento - Zest</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+</head>
+<body>
+    <header class="form-header">
+        <img src="{{ url_for('static', filename='img/zest_logo.png') }}" alt="Zest Logo" class="logo">
+        <h1>Plan de Financiamiento Zest</h1>
+    </header>
+
+    <main class="form-container">
+        <div id="progress-bar">
+            <div id="progress"></div>
+        </div>
+
+        <form id="financingForm">
+            <!-- ==================== PASO 1 ==================== -->
+            <div class="form-step active" id="step-1">
+                <h2>Datos del Solicitante</h2>
+
+                <label for="tipo_id">Tipo de documento:</label>
+                <select name="tipo_id" id="tipo_id" required>
+                    <option value="">Seleccione...</option>
+                    <option value="DNI">DNI</option>
+                    <option value="CE">Carnet de Extranjería</option>
+                    <option value="PAS">Pasaporte</option>
+                </select>
+
+                <label for="numero_id">Número de identificación:</label>
+                <input type="text" id="numero_id" name="numero_id" required>
+
+                <label for="nombres">Nombres:</label>
+                <input type="text" id="nombres" name="nombres" required>
+
+                <label for="apellidos">Apellidos:</label>
+                <input type="text" id="apellidos" name="apellidos" required>
+
+                <label for="correo">Correo electrónico:</label>
+                <input type="email" id="correo" name="correo" required>
+
+                <label for="fecha_nacimiento">Fecha de nacimiento:</label>
+                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
+
+                <label for="estado_civil">Estado civil:</label>
+                <select id="estado_civil" name="estado_civil" required>
+                    <option value="">Seleccione...</option>
+                    <option value="Soltero">Soltero(a)</option>
+                    <option value="Casado">Casado(a)</option>
+                    <option value="Divorciado">Divorciado(a)</option>
+                    <option value="Viudo">Viudo(a)</option>
+                </select>
+
+                <div id="conyuge_section" class="hidden">
+                    <h3>Datos del Cónyuge</h3>
+                    <label for="nombre_conyuge">Nombre completo:</label>
+                    <input type="text" id="nombre_conyuge" name="nombre_conyuge">
+
+                    <label for="fecha_conyuge">Fecha de nacimiento:</label>
+                    <input type="date" id="fecha_conyuge" name="fecha_conyuge">
+                </div>
+
+                <label for="tiene_hijos">¿Tiene hijos?</label>
+                <select id="tiene_hijos" name="tiene_hijos" required>
+                    <option value="">Seleccione...</option>
+                    <option value="si">Sí</option>
+                    <option value="no" selected>No</option>
+                </select>
+
+
+                <div id="hijos_section" class="hidden">
+                    <div id="lista_hijos"></div>
+                    <button type="button" class="add-btn" id="agregar_hijo">Agregar hijo</button>
+                </div>
+
+                <label for="codigo">Iniciales o código referencial:</label>
+                <input type="text" id="codigo" name="codigo">
+
+                <label for="hub">Hub del asesor financiero:</label>
+                <input type="text" id="hub" name="hub">
+
+                <label for="objetivos">Objetivos y aspiraciones:</label>
+                <textarea id="objetivos" name="objetivos" rows="3"></textarea>
+
+                <div class="buttons">
+                    <button type="button" class="next-btn">Siguiente</button>
+                </div>
+            </div>
+
+            <!-- ==================== PASO 2 Gastos recurrentes y discrecionales ==================== -->
+            <div class="form-step" id="step-2">
+                <h2>Gastos básicos recurrentes y discrecionales</h2>
+
+                <label for="alquiler">Alquiler y/o mantenimiento (mensual y en US$):</label>
+                <input type="number" id="alquiler" name="alquiler">
+
+                <label for="alimentacion">Supermercado / Alimentación y compras en general (mensual y en US$):</label>
+                <input type="number" id="alimentacion" name="alimentacion">
+
+                <label for="servicios">Servicios básicos: Agua, luz, gas, teléfono, etc. (mensual y en US$):</label>
+                <input type="number" id="servicios" name="servicios">
+
+                <label for="sueldo">Sueldos de personal del hogar (mensual y en US$):</label>
+                <input type="number" id="sueldo" name="sueldo">
+
+                <label for="transporte">Transporte, gasolina, mantenimiento de vehículos (mensual y en US$):</label>
+                <input type="number" id="transporte" name="transporte">
+
+                <label for="otros">Otros gastos básicos no considerados en los puntos anteriores (mensual y en US$):</label>
+                <input type="number" id="otros" name="otros">
+
+                <label for="estilos">Gastos en estilo de vida (mensual y en US$):</label>
+                <input type="number" id="estilos" name="estilos">
+
+                <label for="viajes">Viajes (anual y en US$):</label>
+                <input type="number" id="viajes" name="viajes">
+
+                <label for="seguro">Seguro médico (anual y en US$):</label>
+                <input type="number" id="seguro" name="seguro">
+
+                <label for="cambios">¿Cómo estima que se ajustarán sus gastos después de la jubilación?</label>
+                <textarea id="cambios" name="cambios" rows="3"></textarea>
+
+                <!--
+                <label for="estado_civil_2">Estado civil:</label>
+                <select id="estado_civil_2" name="estado_civil_2">
+                    <option value="">Seleccione...</option>
+                    <option>Soltero(a)</option>
+                    <option>Casado(a)</option>
+                    <option>Divorciado(a)</option>
+                    <option>Viudo(a)</option>
+                </select>
+
+                <label>¿Tiene hijos?</label>
+                <select id="tiene_hijos_2" name="tiene_hijos_2">
+                    <option value="no">No</option>
+                    <option value="si">Sí</option>
+                </select>
+
+                <div id="hijos_section_2" class="hidden">
+                    <h3>Información de hijos</h3>
+                    <label for="hijo1_fecha">Fecha de nacimiento hijo 1:</label>
+                    <input type="date" id="hijo1_fecha" name="hijo1_fecha">
+                </div>-->
+
+                <div class="buttons">
+                    <button type="button" class="prev-btn">Anterior</button>
+                    <button type="button" class="next-btn">Siguiente</button>
+                </div>
+            </div>
+            
+            <!-- ==================== PASO 3 Bienes muebles e inmuebles ==================== -->
+            <div class="form-step" id="step-3">
+                <h2>Bienes Muebles e Inmuebles</h2>
+
+                <label for="cambio_automovil">¿Cada cuántos años cambia de automóvil?</label>
+                <input type="number" id="cambio_automovil" name="cambio_automovil">
+
+                <label for="automovil">¿Qué monto destina a  cada cambio de automóvil? (US$):</label>
+                <input type="number" id="automovil" name="automovil">
+
+                <label for="anho_cambio_automovil">¿En qué año realizará el primer cambio de automóvil?</label>
+                <input 
+                    type="number" 
+                    id="anho_cambio_automovil" 
+                    name="anho_cambio_automovil" 
+                    min="2020" 
+                    max="2100" 
+                    step="1" 
+                    placeholder="Ej. 2028">
+
+                <label for="casa">Valor de casa propia (US$):</label>
+                <input type="number" id="casa" name="casa">
+
+                <label for="otros_inmuebles">Otros inmuebles de uso personal (US$):</label>
+                <input type="number" id="otros_inmuebles" name="otros_inmuebles">
+
+                <label for="inmuebles_inversion">Inmuebles de Inversión (US$)</label>
+                <input type="number" id="inmuebles_inversion" name="inmuebles_inversion">
+
+                <div class="buttons">
+                    <button type="button" class="prev-btn">Anterior</button>
+                    <button type="button" class="next-btn">Siguiente</button>
+                </div>
+            </div>
+            
+             <!-- ==================== PASO 4 Patrimonio e inversiones ==================== -->
+            <div class="form-step" id="step-3">
+                <h2>Patrimonio e Inversiones</h2>
+
+                <label for="tiene_participacion">¿Cuenta con participación en Negocios?</label>
+                <select id="tiene_participacion" name="tiene_participacion" required>
+                    <option value="">Seleccione...</option>
+                    <option value="si">Sí</option>
+                    <option value="no" selected>No</option>
+                </select>
+
+                <div id="participacion_section" class="hidden">
+                    <div id="lista_participacion"></div>
+                    <button type="button" class="add-btn" id="agregar_participacion">Agregar Particpación</button>
+                </div>
+
+                <div class="buttons">
+                    <button type="button" class="prev-btn">Anterior</button>
+                    <button type="button" class="next-btn">Siguiente</button>
+                </div>
+            </div>
+            
+                
+
+            <!-- ==================== PASO FINAL ==================== -->
+            <div class="form-step" id="step-final">
+                <h2>¡Listo!</h2>
+                <p>Has completado tu plan de financiamiento.</p>
+                <button type="submit" class="submit-btn">Generar PDF</button>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        const steps = document.querySelectorAll(".form-step");
+        const nextBtns = document.querySelectorAll(".next-btn");
+        const prevBtns = document.querySelectorAll(".prev-btn");
+        const progress = document.getElementById("progress");
+
+        const estadoCivil = document.getElementById('estado_civil');
+        const conyugeSection = document.getElementById('conyuge_section');
+        const hijosSelect = document.getElementById('tiene_hijos');
+        const hijosSection = document.getElementById('hijos_section');
+        const agregarHijo = document.getElementById('agregar_hijo');
+        const listaHijos = document.getElementById('lista_hijos');
+
+        const participacionSelect = document.getElementById('tiene_participacion');
+        const participacionSection = document.getElementById('participacion_section');
+        const agregarParticipacion = document.getElementById('agregar_participacion');
+        const listaparticipacion = document.getElementById('lista_participacion');
+
+        let currentStep = 0;
+        let contadorHijos = 0;
+        let contadorParticipacion = 0;
+
+        // Mostrar cónyuge
+        estadoCivil.addEventListener('change', () => {
+            const esCasado = estadoCivil.value === 'Casado';
+            conyugeSection.classList.toggle('hidden', !esCasado);
+
+            // Si no es casado, limpiar los campos del cónyuge
+            if (!esCasado) {
+                document.getElementById('nombre_conyuge').value = '';
+                document.getElementById('fecha_conyuge').value = '';
+            }
+        });
+
+        // Mostrar / ocultar hijos
+        hijosSelect.addEventListener('change', () => {
+            if (hijosSelect.value === 'si') {
+                hijosSection.classList.remove('hidden');
+            } else {
+                hijosSection.classList.add('hidden');
+                listaHijos.innerHTML = '';
+                contadorHijos = 0;
+            }
+        });
+
+        // Mostrar / ocultar participacion
+        participacionSelect.addEventListener('change', () => {
+            if (participacionSelect.value === 'si') {
+                participacionSection.classList.remove('hidden');
+            } else {
+                participacionSection.classList.add('hidden');
+                listaparticipacion.innerHTML = '';
+                contadorParticipacion = 0;
+            }
+        });
+
+        //Agregar participacion dinámicamente
+        agregarParticipacion.addEventListener('click', () => {
+            contadorParticipacion++;
+            const participacionDiv = document.createElement('div');
+            participacionDiv.classList.add('child-card');
+            participacionDiv.innerHTML = `
+                <div class="child-header">
+                    <h4>Participación ${contadorParticipacion}</h4>
+                    <button type="button" class="delete-participacion">✖</button>
+                </div>
+
+
+                <!--
+                <label>Nombre del negocio:</label>
+                <input type="text" name="negocio_nombre_${contadorParticipacion}" required>
+              
+                <label>Porcentaje de participación (%):</label>
+                <input type="number" name="negocio_porcentaje_${contadorParticipacion}" min="0" max="100" required>
+                -->
+
+                <label>Valor estimado de la participación (US$):</label>
+                <input type="number" name="negocio_valor_${contadorParticipacion}" min="0" required>
+            `;
+            listaparticipacion.appendChild(participacionDiv);
+
+            participacionDiv.querySelector(".delete-participacion").addEventListener("click", () => {
+                participacionDiv.remove();
+            });
+        });
+
+        // Agregar hijos dinámicamente
+        agregarHijo.addEventListener('click', () => {
+            contadorHijos++;
+            const hijoDiv = document.createElement('div');
+            hijoDiv.classList.add('child-card');
+            hijoDiv.innerHTML = `
+                <div class="child-header">
+                    <h4>Hijo ${contadorHijos}</h4>
+                    <button type="button" class="delete-hijo">✖</button>
+                </div>
+
+                <label>Fecha de nacimiento:</label>
+                <input type="date" name="hijo_fecha_${contadorHijos}" required>
+
+                <label>Tipo de educación:</label>
+                <select name="hijo_educacion_${contadorHijos}" required>
+                    <option value="">Seleccione...</option>
+                    <option>Kinder</option>
+                    <option>Colegio</option>
+                    <option>Universidad</option>
+                    <option>Postgrado</option>
+                    <option>Instituto</option>
+                    <option>Otros</option>
+                </select>
+
+                <label>Costo anual (S/):</label>
+                <input type="number" name="hijo_costo_${contadorHijos}" min="0" required>
+            `;
+            listaHijos.appendChild(hijoDiv);
+
+            hijoDiv.querySelector(".delete-hijo").addEventListener("click", () => {
+                hijoDiv.remove();
+            });
+        });
+
+        // Control de pasos
+        nextBtns.forEach(btn => btn.addEventListener("click", () => changeStep(1)));
+        prevBtns.forEach(btn => btn.addEventListener("click", () => changeStep(-1)));
+
+        function changeStep(direction) {
+            steps[currentStep].classList.remove("active");
+            currentStep += direction;
+            steps[currentStep].classList.add("active");
+            progress.style.width = ((currentStep + 1) / steps.length) * 100 + "%";
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    </script>
+</body>
+</html>

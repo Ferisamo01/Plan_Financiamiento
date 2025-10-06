@@ -2,9 +2,20 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Página principal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Financiamiento Zest</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>Hola desde Flask 😎</h1>
+    <div class="container">
+        <div class="logo-section">
+            <img src="{{ url_for('static', filename='img/zest_logo.png') }}" alt="Zest Logo">
+        </div>
+
+        <h1>Plan de Financiamiento Zest</h1>
+        <p>Encuentra la mejor opción para financiar tus metas con facilidad y confianza.</p>
+
+        <a href="/formulario" class="btn">Comenzar</a>
+    </div>
 </body>
 </html>

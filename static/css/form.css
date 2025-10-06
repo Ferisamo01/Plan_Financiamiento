@@ -1,0 +1,162 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5f7fa;
+    margin: 0;
+    padding: 0;
+}
+
+.form-header {
+    background-color: #a5c09c;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.logo {
+    width: 100px;
+    display: block;
+    margin: 0 auto 10px;
+}
+
+.form-container {
+    max-width: 700px;
+    margin: 30px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 500;
+}
+
+input, textarea {
+    width: 97%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+    font-size: 1rem;
+}
+
+select{
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+    font-size: 1rem;
+}
+
+button {
+    background-color: #a5c09c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+button:hover {
+    background-color: #a5c09c;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+#progress-bar {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 25px;
+}
+
+#progress {
+    height: 10px;
+    width: 12.5%;
+    background-color: #0d6efd;
+    transition: width 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 5px rgba(13, 110, 253, 0.4);
+    outline: none;
+}
+
+.child-card {
+    background-color: #f8f9fc;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #d6d8e0;
+    margin-top: 10px;
+}
+
+.add-btn {
+    background-color: #198754;
+}
+.add-btn:hover {
+    background-color: #146c43;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+@media (max-width: 600px) {
+    .form-container {
+        padding: 20px;
+        margin: 15px;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+
+.child-card {
+    position: relative;
+    background: #f9fafc;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.child-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-hijo {
+    background: transparent;
+    border: none;
+    color: #d33;
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.delete-hijo:hover {
+    color: #a00;
+    transform: scale(1.1);
+}
