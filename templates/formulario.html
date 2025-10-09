@@ -67,7 +67,7 @@
                 <select id="tiene_hijos" name="tiene_hijos" required>
                     <option value="">Seleccione...</option>
                     <option value="si">Sí</option>
-                    <option value="no" selected>No</option>
+                    <option value="no">No</option>
                 </select>
 
 
@@ -187,15 +187,18 @@
                 </div>
             </div>
             
-             <!-- ==================== PASO 4 Patrimonio e inversiones ==================== -->
+            <!-- ==================== PASO 4 Situación y Salud Patrimonial ==================== -->
             <div class="form-step" id="step-3">
                 <h2>Patrimonio e Inversiones</h2>
+
+                <label for="ahorros_corrientes">Cuentas de ahorros y corrientes (US$)</label>
+                <input type="number" id="ahorros_corrientes" name="ahorros_corrientes">
 
                 <label for="tiene_participacion">¿Cuenta con participación en Negocios?</label>
                 <select id="tiene_participacion" name="tiene_participacion" required>
                     <option value="">Seleccione...</option>
                     <option value="si">Sí</option>
-                    <option value="no" selected>No</option>
+                    <option value="no">No</option>
                 </select>
 
                 <div id="participacion_section" class="hidden">
@@ -203,13 +206,163 @@
                     <button type="button" class="add-btn" id="agregar_participacion">Agregar Particpación</button>
                 </div>
 
+                <label for="tiene_inversion">¿Cuenta con algún portafolio de inversión?</label>
+                <select id="tiene_inversion" name="tiene_inversion" required>
+                    <option value="">Seleccione...</option>
+                    <option value="si">Sí</option>
+                    <option value="no">No</option>
+                </select>
+
+                <div id="inversion_section" class="hidden">
+                    <div id="lista_inversion"></div>
+                    <button type="button" class="add-btn" id="agregar_inversion">Agregar Inversión</button>
+                </div>
+                
+                <label for="situacion_laboral_titular">Situación Laboral del titular</label>
+                <select id="situacion_laboral_titular" name="situacion_laboral_titular" required>
+                    <option value="">Seleccione...</option>
+                    <option value="Empleado">Empleado</option>
+                    <option value="Independiente">Independiente</option>
+                    <option value="Empresario">Empresario</option>
+                    <option value="Jubilado">Jubilado</option>
+                </select>
+
+                <div id ="activo_section" class="hidden">
+                    <label for="sueldo_titular">Sueldo del titular (mensual y en S/.)</label>
+                    <input type="number" id="sueldo_titular" name="sueldo_titular" required>
+
+                    <label for="utilidades_titular">Utilidades y bono del titular (anual y en US$)</label>
+                    <input type="number" id="utilidades_titular" name="utilidades_titular">
+
+                    <label for="ingreso_promedio">Ingreso promedio (mensual y en US$)</label>
+                    <input type="number" id="ingreso_promedio" name="ingreso_promedio">
+
+                    <label for="edad_jubilacion">¿A qué edad se piensa jubilar?</label>
+                    <input 
+                        type="number" 
+                        id="edad_jubilacion" 
+                        name="edad_jubilacion" 
+                        min="50" 
+                        max="80" 
+                        step="1" 
+                        placeholder="Ej. 65">
+
+                </div>
+
+                <div id ="inactivo_section" class="hidden">
+
+                    <label for="recibe_pension">¿Recibe una pensión mensual?</label>
+                    <select id="recibe_pension" name="recibe_pension" required>
+                        <option value="">Seleccione...</option>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+
+                    <label for="ingreso_pension">Pensión promedio mensual (S/.)</label>
+                    <input type="number" id="ingreso_pension" name="ingreso_pension">
+                
+                </div>
+
+                <label for="valor_fondo">Valor de fondo de pensión actual (S/.)</label>
+                <input type="number" id="valor_fondo" name="valor_fondo">
+
+
+
+                <div id ="conyugue_situacion_section" class="hidden">
+                    <h3>Patrimonio e Inversiones Cónyugue</h3>
+
+                    <label for="situacion_laboral_conyugue">Situación Laboral del cónyugue</label>
+                    <select id="situacion_laboral_conyugue" name="situacion_laboral_titular" required>
+                        <option value="">Seleccione...</option>
+                        <option value="Empleado_conyugue">Empleado</option>
+                        <option value="Independiente_conyugue">Independiente</option>
+                        <option value="Empresario_conyugue">Empresario</option>
+                        <option value="Jubilado_conyugue">Jubilado</option>
+                    </select>
+
+                    <div id ="activo_section_conyugue" class="hidden">
+                        <label for="sueldo_titular_conyugue">Sueldo del cónyugue (mensual y en S/.)</label>
+                        <input type="number" id="sueldo_titular_conyugue" name="sueldo_titular_conyugue" required>
+
+                        <label for="utilidades_titular_conyugue">Utilidades y bono del cónyugue (anual y en US$)</label>
+                        <input type="number" id="utilidades_titular_conyugue" name="utilidades_titular_conyugue">
+
+                        <label for="ingreso_promedio_conyugue">Ingreso promedio del cónyugue (mensual y en US$)</label>
+                        <input type="number" id="ingreso_promedio_conyugue" name="ingreso_promedio_conyugue">
+
+                        <label for="edad_jubilacion_conyugue">Edad exacta o estimada del cónyugue</label>
+                        <input 
+                            type="number" 
+                            id="edad_jubilacion_conyugue" 
+                            name="edad_jubilacion_conyugue" 
+                            min="50" 
+                            max="80" 
+                            step="1" 
+                            placeholder="Ej. 65">
+
+                    </div>
+
+                    <div id ="inactivo_section_conyugue" class="hidden">
+
+                        <label for="recibe_pension_conyugue">¿El cónyugue recibe una pensión mensual?</label>
+                        <select id="recibe_pension_conyugue" name="recibe_pension_conyugue" required>
+                            <option value="">Seleccione...</option>
+                            <option value="si">Sí</option>
+                            <option value="no">No</option>
+                        </select>
+
+                        <label for="ingreso_pension_conyugue">Pensión promedio mensual del cónyugue (S/.)</label>
+                        <input type="number" id="ingreso_pension_conyugue" name="ingreso_pension_conyugue">
+                    
+                    </div>
+
+                    <label for="valor_fondo_conyugue">Valor de fondo de pensión actual del cónyugue (S/.)</label>
+                    <input type="number" id="valor_fondo_conyugue" name="valor_fondo_conyugue">
+                
+                </div>
+
+                <label for="alquileres">Ingresos por Alquileres (mensual y en US$)</label>
+                <input type="number" id="alquileres" name="alquileres">
+
+                <label for="dividendos">Dividendos de negocios (anual y en US$)</label>
+                <input type="number" id="otros_ingresos" name="otros_ingresos">
+
+                <label for="otros_ingresos">Otros ingresos (anual y en US$)</label>
+                <input type="number" id="otros_ingresos" name="otros_ingresos">
+
+                <label for="ahorro_familiar">Valor de ahorro familiar (anual y en US$)</label>
+                <input type="number" id="ahorro_familiar" name="ahorro_familiar">
+
                 <div class="buttons">
                     <button type="button" class="prev-btn">Anterior</button>
                     <button type="button" class="next-btn">Siguiente</button>
                 </div>
             </div>
-            
+
+            <!-- ==================== PASO 5 Gestión de Créditos y Deudas ==================== -->
+            <div class="form-step" id="step-4">
+                <h2>Gestión de créditos y deudas</h2>
+
+                <label for="tiene_creditos">¿Tienes Créditos/Deudas?</label>
+                <select id="tiene_creditos" name="tiene_creditos" required>
+                    <option value="">Seleccione...</option>
+                    <option value="si">Sí</option>
+                    <option value="no">No</option>
+                </select>
+
+                <div id="creditos_section" class="hidden">
+                    <div id="lista_creditos"></div>
+                    <button type="button" class="add-btn" id="agregar_creditos">Agregar Crédito</button>
+                </div>
                 
+                
+                <div class="buttons">
+                    <button type="button" class="prev-btn">Anterior</button>
+                    <button type="button" class="next-btn">Siguiente</button>
+                </div>
+
+            </div>
+
 
             <!-- ==================== PASO FINAL ==================== -->
             <div class="form-step" id="step-final">
@@ -228,6 +381,8 @@
 
         const estadoCivil = document.getElementById('estado_civil');
         const conyugeSection = document.getElementById('conyuge_section');
+        const conyugepatrimonioSection = document.getElementById('conyugue_situacion_section');
+
         const hijosSelect = document.getElementById('tiene_hijos');
         const hijosSection = document.getElementById('hijos_section');
         const agregarHijo = document.getElementById('agregar_hijo');
@@ -238,19 +393,55 @@
         const agregarParticipacion = document.getElementById('agregar_participacion');
         const listaparticipacion = document.getElementById('lista_participacion');
 
+        const inversionSelect = document.getElementById('tiene_inversion');
+        const inversionSection = document.getElementById('inversion_section');
+        const agregarInversion = document.getElementById('agregar_inversion');
+        const listainversion = document.getElementById('lista_inversion');
+
+        const creditoSelect = document.getElementById('tiene_creditos');
+        const creditosSection = document.getElementById('creditos_section');
+        const agregarCreditos = document.getElementById('agregar_creditos');
+        const listaCreditos = document.getElementById('lista_creditos');
+
+        const activoSection = document.getElementById('activo_section');
+        const inactivoSection = document.getElementById('inactivo_section');
+
+        const pensionistaSelect = document.getElementById('recibe_pension');
+        const situacionSelect = document.getElementById('situacion_laboral_titular');
+
+        const activoSectionConyugue = document.getElementById('activo_section_conyugue');
+        const inactivoSectionConyugue = document.getElementById('inactivo_section_conyugue');
+
+        const pensionistaSelectConyugue = document.getElementById('recibe_pension_conyugue');
+        const situacionSelectConyugue = document.getElementById('situacion_laboral_conyugue');
+
+
+
         let currentStep = 0;
         let contadorHijos = 0;
         let contadorParticipacion = 0;
+        let contadorInversion = 0;
 
         // Mostrar cónyuge
         estadoCivil.addEventListener('change', () => {
             const esCasado = estadoCivil.value === 'Casado';
             conyugeSection.classList.toggle('hidden', !esCasado);
+            conyugepatrimonioSection.classList.toggle('hidden', !esCasado);
 
             // Si no es casado, limpiar los campos del cónyuge
             if (!esCasado) {
                 document.getElementById('nombre_conyuge').value = '';
                 document.getElementById('fecha_conyuge').value = '';
+
+                // Patrimonio
+                document.getElementById('situacion_laboral_conyugue').value = '';
+                document.getElementById('sueldo_titular_conyugue').value = '';
+                document.getElementById('utilidades_titular_conyugue').value = '';
+                document.getElementById('ingreso_promedio_conyugue').value = '';
+                document.getElementById('edad_jubilacion_conyugue').value = '';
+                document.getElementById('recibe_pension_conyugue').value = '';
+                document.getElementById('ingreso_pension_conyugue').value = '';
+                document.getElementById('valor_fondo_conyugue').value = '';
             }
         });
 
@@ -274,6 +465,131 @@
                 listaparticipacion.innerHTML = '';
                 contadorParticipacion = 0;
             }
+        });
+
+        // Mostrar / ocultar inversion
+        inversionSelect.addEventListener('change', () => {
+            if (inversionSelect.value === 'si') {
+                inversionSection.classList.remove('hidden');
+            } else {
+                inversionSection.classList.add('hidden');
+                listainversion.innerHTML = '';
+                contadorInversion = 0;
+            }
+        });
+
+        // Mostrar / ocultar creditos
+        creditoSelect.addEventListener('change', () => {
+            if (creditoSelect.value === 'si') {
+                creditosSection.classList.remove('hidden');
+            } else {
+                creditosSection.classList.add('hidden');
+                listaCreditos.innerHTML = '';
+            }
+        });
+
+        pensionistaSelect.addEventListener('change', () => {
+            const esPensionista = pensionistaSelect.value === 'si';
+            document.getElementById('ingreso_pension').disabled = !esPensionista;
+
+            // Si no es pensionista, limpiar el campo relacionado
+            if (!esPensionista) {
+                document.getElementById('ingreso_pension').value = '';
+            }
+        });
+
+        pensionistaSelectConyugue.addEventListener('change', () => {
+            const esPensionistaConyugue = pensionistaSelectConyugue.value === 'si';
+            document.getElementById('ingreso_pension_conyugue').disabled = !esPensionistaConyugue;
+
+            // Si no es pensionista, limpiar el campo relacionado
+            if (!esPensionistaConyugue) {
+                document.getElementById('ingreso_pension_conyugue').value = '';
+            }
+        });
+
+        
+        // Mostrar / ocultar sección de activo
+        situacionSelect.addEventListener('change', () => {
+            const esActivo = situacionSelect.value === 'Empleado' || situacionSelect.value === 'Independiente' || situacionSelect.value === 'Empresario';
+            activoSection.classList.toggle('hidden', !esActivo);
+
+            // Si no es activo, limpiar los campos relacionados
+            if (!esActivo) {
+                //activoSection.classList.add('hidden');
+                document.getElementById('sueldo_titular').value = '';
+                document.getElementById('utilidades_titular').value = '';
+                document.getElementById('ingreso_promedio').value = '';
+                document.getElementById('edad_jubilacion').value = '';
+                inactivoSection.classList.remove('hidden');
+            
+            } else{
+                inactivoSection.classList.add('hidden');
+                document.getElementById('recibe_pension').value = '';
+                document.getElementById('ingreso_pension').value = '';
+                activoSection.classList.remove('hidden');
+                
+            }
+        });
+
+        // Mostrar / ocultar sección de activo cónyugue
+        situacionSelectConyugue.addEventListener('change', () => {
+            const esActivoConyugue = situacionSelectConyugue.value === 'Empleado_conyugue' || situacionSelectConyugue.value === 'Independiente_conyugue' || situacionSelectConyugue.value === 'Empresario_conyugue';
+            activoSectionConyugue.classList.toggle('hidden', !esActivoConyugue);
+
+            // Si no es activo, limpiar los campos relacionados
+            if (!esActivoConyugue) {
+                //activoSection.classList.add('hidden');
+                document.getElementById('sueldo_titular_conyugue').value = '';
+                document.getElementById('utilidades_titular_conyugue').value = '';
+                document.getElementById('ingreso_promedio_conyugue').value = '';
+                document.getElementById('edad_jubilacion_conyugue').value = '';
+                inactivoSectionConyugue.classList.remove('hidden');
+            
+            } else{
+                inactivoSectionConyugue.classList.add('hidden');
+                document.getElementById('recibe_pension_conyugue').value = '';
+                document.getElementById('ingreso_pension_conyugue').value = '';
+                activoSectionConyugue.classList.remove('hidden');
+                
+            }
+        });
+
+        
+        //Agregar inversion dinámicamente
+        agregarInversion.addEventListener('click', () => {
+            contadorInversion++;
+            const inversionDiv = document.createElement('div');
+            inversionDiv.classList.add('child-card');
+            inversionDiv.innerHTML = `
+                <div class="child-header">
+                    <h4>Inversión ${contadorInversion}</h4>
+                    <button type="button" class="delete-inversion">✖</button>
+                </div>
+
+                <label>Procedencia de la inversión:</label>
+                <select name="inversion_extranjera_${contadorInversion}" required>
+                    <option value="">Seleccione...</option>
+                    <option value="false">Local</option>
+                    <option value="true">Extranjera</option>
+                </select>
+
+                <label>Portafolio de Inversión (US$):</label>
+                <input type="number" name="inversion_valor_${contadorInversion}" min="0" required>
+
+                <label>Perfil de Inversión:</label>
+                <select id="inversion_tipo_${contadorInversion}" name="inversion_tipo_${contadorInversion}" required>
+                    <option value="">Seleccione...</option>
+                    <option value="Conservador">Conservador</option>
+                    <option value="Moderado">Moderado</option>
+                    <option value="Dinamico">Dinámico</option>
+                </select>
+            `;
+            listainversion.appendChild(inversionDiv);
+
+            inversionDiv.querySelector(".delete-inversion").addEventListener("click", () => {
+                inversionDiv.remove();
+            });
         });
 
         //Agregar participacion dinámicamente
