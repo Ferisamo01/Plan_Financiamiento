@@ -339,9 +339,9 @@
                 </div>
             </div>
 
-            <!-- ==================== PASO 5 Gestión de Créditos y Deudas ==================== -->
+            <!-- ==================== PASO 5 Gestión de Créditos/Deudas y Seguros de Vida ==================== -->
             <div class="form-step" id="step-4">
-                <h2>Gestión de créditos y deudas</h2>
+                <h2>Gestión de Créditos/Deudas y Seguros de vida</h2>
 
                 <label for="tiene_creditos">¿Tienes Créditos/Deudas?</label>
                 <select id="tiene_creditos" name="tiene_creditos" required>
@@ -355,12 +355,65 @@
                     <button type="button" class="add-btn" id="agregar_creditos">Agregar Crédito</button>
                 </div>
                 
+                <label for="seguro_vida">¿Cuenta con un seguro de vida?</label>
+                <select id="seguro_vida" name="seguro_vida" required>
+                    <option value="">Seleccione...</option>
+                    <option value="si">Sí</option>
+                    <option value="no">No</option>
+                </select>
+
+                <div id="detalles_seguro_vida" class="hidden">
+                    <div class="child-card">
+                        <label for="tipo_seguro">Tipo de seguro:</label>
+                        <input type="text" id="tipo_seguro" name="tipo_seguro">
+
+                        <label for="monto_seguro">Monto asegurado (US$):</label>
+                        <input type="number" id="monto_seguro" name="monto_seguro">
+
+                        <label for="monto_retorno">Monto de retorno (US$)</label>
+                        <input type="number" id="monto_retorno" name="monto_retorno">
+
+                        <label for="anhios_retiro">¿En cuántos años piensa retirar el monto señalado en la pregunta anterior?</label>
+                        <input 
+                            type="number" 
+                            id="anhios_retiro" 
+                            name="anhios_retiro" 
+                            min="0" 
+                            max="40" 
+                            step="1" 
+                            placeholder="Ej. 5">
+                    </div>
+                </div>
                 
+
                 <div class="buttons">
                     <button type="button" class="prev-btn">Anterior</button>
                     <button type="button" class="next-btn">Siguiente</button>
                 </div>
 
+            </div>
+
+
+            <!-- ==================== PASO 6 Objetivos Financieros ==================== -->
+            <div class="form-step" id="step-5">
+                <h2>Objetivos Financieros</h2>
+
+                <label for="tiene_objetivos">¿Tienes Objetivos o Metas Financieras?</label>
+                <select id="tiene_objetivos" name="tiene_objetivos" required>
+                    <option value="">Seleccione...</option>
+                    <option value="si">Sí</option>
+                    <option value="no">No</option>
+                </select>
+
+                <div id="objetivos_section" class="hidden">
+                    <div id="lista_objetivos"></div>
+                    <button type="button" class="add-btn" id="agregar_objetivos">Agregar Objetivos Financieros</button>
+                </div>
+
+                <div class="buttons">
+                    <button type="button" class="prev-btn">Anterior</button>
+                    <button type="button" class="next-btn">Siguiente</button>
+                </div>
             </div>
 
 
@@ -383,6 +436,9 @@
         const conyugeSection = document.getElementById('conyuge_section');
         const conyugepatrimonioSection = document.getElementById('conyugue_situacion_section');
 
+        const seguroVidaSelect = document.getElementById('seguro_vida');
+        const seguroVidaSection = document.getElementById('detalles_seguro_vida');
+
         const hijosSelect = document.getElementById('tiene_hijos');
         const hijosSection = document.getElementById('hijos_section');
         const agregarHijo = document.getElementById('agregar_hijo');
@@ -398,10 +454,15 @@
         const agregarInversion = document.getElementById('agregar_inversion');
         const listainversion = document.getElementById('lista_inversion');
 
+        const objetivosSelect = document.getElementById('tiene_objetivos');
+        const objetivosSection = document.getElementById('objetivos_section');
+        const agregarObjetivos = document.getElementById('agregar_objetivos');
+        const listaObjetivos = document.getElementById('lista_objetivos');
+
         const creditoSelect = document.getElementById('tiene_creditos');
-        const creditosSection = document.getElementById('creditos_section');
-        const agregarCreditos = document.getElementById('agregar_creditos');
-        const listaCreditos = document.getElementById('lista_creditos');
+        const creditoSection = document.getElementById('creditos_section');
+        const agregarCredito = document.getElementById('agregar_creditos');
+        const listaCredito = document.getElementById('lista_creditos');
 
         const activoSection = document.getElementById('activo_section');
         const inactivoSection = document.getElementById('inactivo_section');
@@ -421,6 +482,20 @@
         let contadorHijos = 0;
         let contadorParticipacion = 0;
         let contadorInversion = 0;
+        let contadorCreditos = 0;
+        let contadorObjetivos = 0;
+
+        seguroVidaSelect.addEventListener('change', () => {
+            if (seguroVidaSelect.value === 'si') {
+                seguroVidaSection.classList.remove('hidden');
+            } else {
+                seguroVidaSection.classList.add('hidden');
+                document.getElementById('tipo_seguro').value = '';
+                document.getElementById('monto_seguro').value = '';
+                document.getElementById('monto_retorno').value = '';
+                document.getElementById('anhios_retiro').value = '';
+            }
+        });
 
         // Mostrar cónyuge
         estadoCivil.addEventListener('change', () => {
@@ -481,10 +556,21 @@
         // Mostrar / ocultar creditos
         creditoSelect.addEventListener('change', () => {
             if (creditoSelect.value === 'si') {
-                creditosSection.classList.remove('hidden');
+                creditoSection.classList.remove('hidden');
             } else {
-                creditosSection.classList.add('hidden');
-                listaCreditos.innerHTML = '';
+                creditoSection.classList.add('hidden');
+                listaCredito.innerHTML = '';
+                contadorCreditos = 0;
+            }
+        });
+
+        objetivosSelect.addEventListener('change', () => {
+            if (objetivosSelect.value === 'si') {
+                objetivosSection.classList.remove('hidden');
+            } else {
+                objetivosSection.classList.add('hidden');
+                listaObjetivos.innerHTML = '';
+                contadorObjetivos = 0;
             }
         });
 
@@ -532,6 +618,7 @@
             }
         });
 
+
         // Mostrar / ocultar sección de activo cónyugue
         situacionSelectConyugue.addEventListener('change', () => {
             const esActivoConyugue = situacionSelectConyugue.value === 'Empleado_conyugue' || situacionSelectConyugue.value === 'Independiente_conyugue' || situacionSelectConyugue.value === 'Empresario_conyugue';
@@ -556,6 +643,40 @@
         });
 
         
+        agregarObjetivos.addEventListener('click', () => {
+            contadorObjetivos++;
+            const objetivoDiv = document.createElement('div');
+            objetivoDiv.classList.add('child-card');
+            objetivoDiv.innerHTML = `
+                <div class="child-header">
+                    <h4>Objetivo ${contadorObjetivos}</h4>
+                    <button type="button" class="delete-objetivo">✖</button>
+                </div>
+
+                <label>Objetivo Financiero a cumplir:</label>
+                <input type="text" name="objetivo_descripcion_${contadorObjetivos}" required>
+
+                <label>Monto necesario (US$):</label>
+                <input type="number" name="objetivo_monto_${contadorObjetivos}" min="0" required>
+
+                <label>¿En cuántos años desea cumplir este objetivo?</label>
+                <input 
+                            type="number" 
+                            id="objetivo_anos_${contadorObjetivos}" 
+                            name="objetivo_anos_${contadorObjetivos}" 
+                            min="0" 
+                            max="40" 
+                            step="1" 
+                            placeholder="Ej. 5"
+                            required>
+            `;
+            listaObjetivos.appendChild(objetivoDiv);
+
+            objetivoDiv.querySelector(".delete-objetivo").addEventListener("click", () => {
+                objetivoDiv.remove();
+            });
+        });
+
         //Agregar inversion dinámicamente
         agregarInversion.addEventListener('click', () => {
             contadorInversion++;
@@ -656,6 +777,53 @@
                 hijoDiv.remove();
             });
         });
+
+        // Agregar créditos dinámicamente
+        agregarCredito.addEventListener('click', () => {
+            const creditoDiv = document.createElement('div');
+            contadorCreditos++;
+            creditoDiv.classList.add('child-card');
+            creditoDiv.innerHTML = `
+                <div class="child-header">
+                    <h4>Crédito ${contadorCreditos}</h4>
+                    <button type="button" class="delete-credito">✖</button>
+                </div>
+
+                <label>Tipo de crédito:</label>
+                <select name="credito_tipo[]" required>
+                    <option value="">Seleccione...</option>
+                    <option>Hipotecario</option>
+                    <option>Vehicular</option>
+                    <option>Personal</option>
+                    <option>Tarjeta de crédito</option>
+                    <option>Otros</option>
+                </select>
+
+                <label>Entidad financiera:</label>
+                <input type="text" name="credito_entidad[]" required>
+
+                <label>Monto original (US$):</label>
+                <input type="number" name="credito_monto_original[]" min="0" required>
+
+                <label>Saldo actual del crédito (US$):</label>
+                <input type="number" name="credito_saldo_actual[]" min="0" required>
+
+                <label>Tasa de interés anual (%):</label>
+                <input type="number" name="credito_tasa_interes[]" min="0" step="0.01" required>
+
+                <label>Plazo restante (meses):</label>
+                <input type="number" name="credito_plazo_restante[]" min="0" required>
+
+                <label>Pago mensual (US$):</label>
+                <input type="number" name="credito_pago_mensual[]" min="0" required>
+            `;
+            listaCredito.appendChild(creditoDiv);
+
+            creditoDiv.querySelector(".delete-credito").addEventListener("click", () => {
+                creditoDiv.remove();
+            });
+        });
+
 
         // Control de pasos
         nextBtns.forEach(btn => btn.addEventListener("click", () => changeStep(1)));
