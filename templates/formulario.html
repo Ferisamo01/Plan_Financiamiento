@@ -20,7 +20,7 @@
         <form id="financingForm">
             <!-- ==================== PASO 1 ==================== -->
             <div class="form-step active" id="step-1">
-                <h2>Datos del Solicitante</h2>
+                <h2>Datos Personales del Solicitante</h2>
 
                 <label for="tipo_id">Tipo de documento:</label>
                 <select name="tipo_id" id="tipo_id" required>
@@ -412,16 +412,23 @@
 
                 <div class="buttons">
                     <button type="button" class="prev-btn">Anterior</button>
-                    <button type="button" class="next-btn">Siguiente</button>
+                    <button id="btnFinalizar" type="button" class="btn btn-success">
+                        Finalizar y generar resultados
+                    </button>
                 </div>
             </div>
 
 
             <!-- ==================== PASO FINAL ==================== -->
             <div class="form-step" id="step-final">
-                <h2>¡Listo!</h2>
-                <p>Has completado tu plan de financiamiento.</p>
-                <button type="submit" class="submit-btn">Generar PDF</button>
+                <h2>Resultados del Plan de Financiamiento</h2>
+                <p>Aquí se mostrarán tus resultados, gráficos, y recomendaciones.</p>
+
+                <!-- Placeholder donde Flask inyectará resultados o gráficos -->
+                <div id="resultado-container"></div>
+
+                <!-- Botón para generar el PDF (por ahora no funcional) -->
+                <button id="btnPDF" type="button" class="submit-btn">Descargar PDF</button>
             </div>
         </form>
     </main>
@@ -836,6 +843,165 @@
             progress.style.width = ((currentStep + 1) / steps.length) * 100 + "%";
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
+
+        document.getElementById("btnFinalizar").addEventListener("click", async () => {
+            // Aquí puedes reutilizar TODO el bloque del script anterior (el que arma el JSON completo)
+            // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+            const titular = {
+                tipo_id: document.getElementById("tipo_id").value,
+                numero_id: document.getElementById("numero_id").value,
+                nombres: document.getElementById("nombres").value,
+                apellidos: document.getElementById("apellidos").value,
+                correo: document.getElementById("correo").value,
+                fecha_nacimiento: document.getElementById("fecha_nacimiento").value,
+                estado_civil: document.getElementById("estado_civil").value,
+                codigo: document.getElementById("codigo").value,
+                hub: document.getElementById("hub").value,
+                objetivos_personales: document.getElementById("objetivos").value
+            };
+
+            // ===== Cónyuge (si aplica) =====
+            let conyuge = null;
+            if (titular.estado_civil === "Casado") {
+                conyuge = {
+                    nombre: document.getElementById("nombre_conyuge").value,
+                    fecha_nacimiento: document.getElementById("fecha_conyuge").value,
+                    situacion_laboral: document.getElementById("situacion_laboral_conyugue").value,
+                    sueldo: document.getElementById("sueldo_titular_conyugue").value,
+                    utilidades: document.getElementById("utilidades_titular_conyugue").value,
+                    ingreso_promedio: document.getElementById("ingreso_promedio_conyugue").value,
+                    edad_jubilacion: document.getElementById("edad_jubilacion_conyugue").value,
+                    recibe_pension: document.getElementById("recibe_pension_conyugue").value,
+                    ingreso_pension: document.getElementById("ingreso_pension_conyugue").value,
+                    valor_fondo: document.getElementById("valor_fondo_conyugue").value
+                };
+            }
+
+            // ===== Hijos =====
+            const hijos = Array.from(document.querySelectorAll("#lista_hijos .child-card")).map(div => ({
+                fecha_nacimiento: div.querySelector("[name^='hijo_fecha_']").value,
+                educacion: div.querySelector("[name^='hijo_educacion_']").value,
+                costo_anual: div.querySelector("[name^='hijo_costo_']").value
+            }));
+
+            // ===== Participaciones =====
+            const participaciones = Array.from(document.querySelectorAll("#lista_participacion .child-card")).map(div => ({
+                valor: div.querySelector("[name^='negocio_valor_']").value
+            }));
+
+            // ===== Inversiones =====
+            const inversiones = Array.from(document.querySelectorAll("#lista_inversion .child-card")).map(div => ({
+                extranjera: div.querySelector("[name^='inversion_extranjera_']").value,
+                valor: div.querySelector("[name^='inversion_valor_']").value,
+                tipo: div.querySelector("[name^='inversion_tipo_']").value
+            }));
+
+            // ===== Créditos =====
+            const creditos = Array.from(document.querySelectorAll("#lista_creditos .child-card")).map(div => ({
+                tipo: div.querySelector("[name='credito_tipo[]']").value,
+                entidad: div.querySelector("[name='credito_entidad[]']").value,
+                monto_original: div.querySelector("[name='credito_monto_original[]']").value,
+                saldo_actual: div.querySelector("[name='credito_saldo_actual[]']").value,
+                tasa_interes: div.querySelector("[name='credito_tasa_interes[]']").value,
+                plazo_restante: div.querySelector("[name='credito_plazo_restante[]']").value,
+                pago_mensual: div.querySelector("[name='credito_pago_mensual[]']").value
+            }));
+
+            // ===== Objetivos =====
+            const objetivos = Array.from(document.querySelectorAll("#lista_objetivos .child-card")).map(div => ({
+                descripcion: div.querySelector("[name^='objetivo_descripcion_']").value,
+                monto: div.querySelector("[name^='objetivo_monto_']").value,
+                anos: div.querySelector("[name^='objetivo_anos_']").value
+            }));
+
+            // ===== Gastos =====
+            const gastos = {
+                alquiler: document.getElementById("alquiler").value,
+                alimentacion: document.getElementById("alimentacion").value,
+                servicios: document.getElementById("servicios").value,
+                sueldo_personal: document.getElementById("sueldo").value,
+                transporte: document.getElementById("transporte").value,
+                otros: document.getElementById("otros").value,
+                estilos: document.getElementById("estilos").value,
+                viajes: document.getElementById("viajes").value,
+                seguro: document.getElementById("seguro").value,
+                cambios: document.getElementById("cambios").value
+            };
+
+            // ===== Patrimonio / Ingresos =====
+            const patrimonio = {
+                ahorro_corriente: document.getElementById("ahorros_corrientes").value,
+                sueldo_titular: document.getElementById("sueldo_titular").value,
+                ingreso_promedio: document.getElementById("ingreso_promedio").value,
+                edad_jubilacion: document.getElementById("edad_jubilacion").value,
+                valor_fondo_pension: document.getElementById("valor_fondo").value,
+                alquileres: document.getElementById("alquileres").value,
+                dividendos: document.getElementById("otros_ingresos").value,
+                ahorro_familiar: document.getElementById("ahorro_familiar").value,
+            };
+
+            // ===== Seguro de vida =====
+            const seguro_vida = (document.getElementById("seguro_vida").value === "si")
+                ? {
+                    tipo: document.getElementById("tipo_seguro").value,
+                    monto: document.getElementById("monto_seguro").value,
+                    retorno: document.getElementById("monto_retorno").value,
+                    anhos_retiro: document.getElementById("anhios_retiro").value
+                }
+                : null;
+            // ... (resto del JSON igual al bloque anterior)
+            // termina con:
+            const datos = {
+                titular,
+                conyuge,
+                hijos,
+                participaciones,
+                inversiones,
+                creditos,
+                objetivos,
+                gastos,
+                patrimonio,
+                seguro_vida
+            };
+
+            console.log("JSON generado:", datos);
+
+            // Mostrar loading
+            document.getElementById("btnFinalizar").disabled = true;
+            document.getElementById("btnFinalizar").textContent = "Procesando...";
+
+            // Enviar a Flask
+            const res = await fetch("/guardar_datos", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(datos)
+            });
+
+            if (res.ok) {
+                const respuesta = await res.json();
+                console.log("Guardado:", respuesta);
+
+                // Mostrar resultados en la pantalla final
+                const contenedor = document.getElementById("resultado-container");
+                contenedor.innerHTML = `
+                <h3>Resumen Financiero</h3>
+                <p><strong>Ingresos:</strong> ${respuesta.ingresos_totales}</p>
+                <p><strong>Gastos:</strong> ${respuesta.gastos_totales}</p>
+                <p><strong>Ahorro Neto:</strong> ${respuesta.ahorro_neto}</p>
+                <div>${respuesta.graficos_html || ""}</div>
+                `;
+
+                // Avanza al paso final
+                document.querySelector("#step-5").classList.remove("active");
+                document.querySelector("#step-final").classList.add("active");
+            } else {
+                alert("Error al guardar los datos");
+            }
+
+            document.getElementById("btnFinalizar").disabled = false;
+            document.getElementById("btnFinalizar").textContent = "Finalizar y generar resultados";
+        });
     </script>
 </body>
 </html>
