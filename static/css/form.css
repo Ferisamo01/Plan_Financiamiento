@@ -5,6 +5,7 @@ body {
     padding: 0;
 }
 
+/* Encabezado */
 .form-header {
     background-color: #a5c09c;
     color: white;
@@ -18,6 +19,7 @@ body {
     margin: 0 auto 10px;
 }
 
+/* Contenedor principal */
 .form-container {
     max-width: 700px;
     margin: 30px auto;
@@ -27,6 +29,7 @@ body {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
+/* Pasos */
 .form-step {
     display: none;
 }
@@ -35,13 +38,14 @@ body {
     display: block;
 }
 
+/* Inputs */
 label {
     display: block;
     margin-top: 15px;
     font-weight: 500;
 }
 
-input, textarea {
+input, select, textarea {
     width: 97%;
     padding: 10px;
     border-radius: 8px;
@@ -50,15 +54,13 @@ input, textarea {
     font-size: 1rem;
 }
 
-select{
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    margin-top: 5px;
-    font-size: 1rem;
+input:focus, select:focus, textarea:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 5px rgba(13, 110, 253, 0.4);
+    outline: none;
 }
 
+/* Botones */
 button {
     background-color: #a5c09c;
     color: white;
@@ -79,6 +81,7 @@ button:hover {
     justify-content: space-between;
 }
 
+/* Barra de progreso */
 #progress-bar {
     width: 100%;
     background-color: #e0e0e0;
@@ -94,44 +97,12 @@ button:hover {
     transition: width 0.3s ease;
 }
 
-input:focus, select:focus, textarea:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 5px rgba(13, 110, 253, 0.4);
-    outline: none;
-}
-
-.child-card {
-    background-color: #f8f9fc;
-    padding: 15px;
-    border-radius: 10px;
-    border: 1px solid #d6d8e0;
-    margin-top: 10px;
-}
-
-.add-btn {
-    background-color: #198754;
-}
-.add-btn:hover {
-    background-color: #146c43;
-}
-
+/* Secciones dinámicas */
 .hidden {
     display: none !important;
 }
 
-
-@media (max-width: 600px) {
-    .form-container {
-        padding: 20px;
-        margin: 15px;
-    }
-
-    button {
-        width: 100%;
-    }
-}
-
-
+/* Cards de hijos e inversiones */
 .child-card {
     position: relative;
     background: #f9fafc;
@@ -147,7 +118,8 @@ input:focus, select:focus, textarea:focus {
     align-items: center;
 }
 
-.delete-hijo {
+.delete-hijo,
+.delete-inversion {
     background: transparent;
     border: none;
     color: #d33;
@@ -156,7 +128,81 @@ input:focus, select:focus, textarea:focus {
     font-weight: bold;
 }
 
-.delete-hijo:hover {
+.delete-hijo:hover,
+.delete-inversion:hover {
     color: #a00;
     transform: scale(1.1);
+}
+
+
+.box-variables {
+    background: #f9fafc;    
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 12px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Responsivo */
+@media (max-width: 600px) {
+    .form-container {
+        padding: 20px;
+        margin: 15px;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+
+.multi-slider {
+    position: relative;
+    width: 94%;
+    height: 40px;
+    margin: 15px 0;
+}
+
+.bar {
+    position: absolute;
+    top: 18px;
+    left: 10px;
+    right: -10px;
+    height: 24px;
+    border-radius: 12px;
+    display: flex;
+    z-index: 1;
+}
+
+.seg {
+    height: 20px;
+    
+}
+
+.fija      { background: #4caf50; }
+.variable  { background: #2196f3; }
+.altern    { background: #9c27b0; }
+.cash      { background: #ffc107; }
+
+.handle {
+    position: absolute;
+    width: 100%;
+    pointer-events: none;
+    appearance: none;
+    -webkit-appearance: none;
+    height: 25px;
+    background: none;
+    z-index: 2;
+}
+
+.handle::-webkit-slider-thumb {
+    pointer-events: all;
+    -webkit-appearance: none;
+    background: #494741;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #333;
+    cursor: pointer;
 }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados Financieros</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+</head>
+<body>
+
+    <header class="form-header">
+        <img src="{{ url_for('static', filename='img/zest_logo.png') }}" alt="Zest Logo" class="logo">
+        <h1>Resultados Financieros</h1>
+    </header>
+
+<div id="resumen" class="card"></div>
+
+<div class="card">
+    <h3>Gráfico Ingresos vs Gastos</h3>
+    <canvas id="chartBar"></canvas>
+</div>
+
+<div class="card">
+    <h3>JSON Original</h3>
+    <pre id="jsonOriginal" style="max-height:300px; overflow:auto; background:#f7f7f7; padding:10px"></pre>
+</div>
+
+<script>
+    // ================================
+    // Cargar datos almacenados
+    // ================================
+    const resultados = JSON.parse(localStorage.getItem("resultados_financieros"));
+    const originales = JSON.parse(localStorage.getItem("datos_originales"));
+
+    // ================================
+    // Mostrar resumen
+    // ================================
+    document.getElementById("resumen").innerHTML = `
+        <h2>Resumen</h2>
+        <p><strong>Ingresos:</strong> S/. ${resultados.ingresos_totales}</p>
+        <p><strong>Gastos:</strong> S/. ${resultados.gastos_totales}</p>
+        <p><strong>Ahorro Neto:</strong> S/. ${resultados.ahorro_neto}</p>
+        <p><strong>Activos Liquidos:</strong> S/. ${resultados.activos_liquidos}</p>
+        <p><strong>Activos No Liquidos:</strong> S/. ${resultados.activos_no_liquidos}</p>
+        <p><strong>AFP + Aportes Futuros</strong> S/. ${resultados.pensiones}</p>
+    `;
+
+    // ================================
+    // Gráfico
+    // ================================
+    const ctx = document.getElementById('chartBar').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Ingresos', 'Gastos', 'Ahorro Neto'],
+            datasets: [{
+                data: [
+                    resultados.ingresos_totales,
+                    resultados.gastos_totales,
+                    resultados.ahorro_neto,
+                    resultados.activos_liquidos,
+                    resultados.activos_no_liquidos,
+                    resultados.pensiones
+                ],
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    // ================================
+    // Mostrar JSON original
+    // ================================
+    document.getElementById("jsonOriginal").textContent =
+        JSON.stringify(originales, null, 2);
+</script>
+
+</body>
+</html>

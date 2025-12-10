@@ -86,9 +86,30 @@
                 <textarea id="objetivos" name="objetivos" rows="3"></textarea>
 
                 <div class="buttons">
+                    <button type="button" id="btn-siguiente-1">Siguiente</button>
+                </div>
+            </div>
+
+            <!-- PASO DE PERFILAMIENTO [OPCIONAL]-->
+            <div class="form-step" id="step-perfilamiento">
+                <h2>Perfil de Riesgo</h2> 
+                <p>Responda las siguientes preguntas para determinar su perfil de riesgo:</p>
+
+                <label for="perfil_cliente">¿Cuál es su perfil de riesgo?</label>
+                <select id="perfil_cliente" name="perfil_cliente" required>
+                    <option value="">Seleccione...</option>
+                    <option value="conservador">Conservador</option>
+                    <option value="moderado">Moderado</option>
+                    <option value="dinamico">Dinámico</option>
+                </select>
+            
+                
+                <div class="buttons">
+                    <button type="button" class="prev-btn">Anterior</button>
                     <button type="button" class="next-btn">Siguiente</button>
                 </div>
             </div>
+            
 
             <!-- ==================== PASO 2 Gastos recurrentes y discrecionales ==================== -->
             <div class="form-step" id="step-2">
@@ -118,7 +139,7 @@
                 <label for="viajes">Viajes (anual y en US$):</label>
                 <input type="number" id="viajes" name="viajes">
 
-                <label for="seguro">Seguro médico (anual y en US$):</label>
+                <label for="seguro">Seguro médico (mensual y en US$):</label>
                 <input type="number" id="seguro" name="seguro">
 
                 <label for="cambios">¿Cómo estima que se ajustarán sus gastos después de la jubilación?</label>
@@ -172,8 +193,10 @@
                     step="1" 
                     placeholder="Ej. 2028">
 
-                <label for="casa">Valor de casa propia (US$):</label>
-                <input type="number" id="casa" name="casa">
+               <div id="propiedades_section" class="normal">
+                    <div id="lista_propiedades"></div>
+                    <button type="button" class="add-btn" id="agregar_propiedad">Agregar propiedad</button>
+                </div>
 
                 <label for="otros_inmuebles">Otros inmuebles de uso personal (US$):</label>
                 <input type="number" id="otros_inmuebles" name="otros_inmuebles">
@@ -227,15 +250,17 @@
                     <option value="Jubilado">Jubilado</option>
                 </select>
 
-                <div id ="activo_section" class="hidden">
-                    <label for="sueldo_titular">Sueldo del titular (mensual y en S/.)</label>
+                <div id ="activo_section" class="hidden box-variables">
+                    <label for="sueldo_titular">Sueldo del titular (anual y en US$.)</label>
                     <input type="number" id="sueldo_titular" name="sueldo_titular" required>
 
                     <label for="utilidades_titular">Utilidades y bono del titular (anual y en US$)</label>
                     <input type="number" id="utilidades_titular" name="utilidades_titular">
 
-                    <label for="ingreso_promedio">Ingreso promedio (mensual y en US$)</label>
-                    <input type="number" id="ingreso_promedio" name="ingreso_promedio">
+                    <div class="hidden">
+                        <label for="ingreso_promedio">Ingreso promedio (anual y en US$)</label>
+                        <input type="number" id="ingreso_promedio" name="ingreso_promedio">
+                    </div>
 
                     <label for="edad_jubilacion">¿A qué edad se piensa jubilar?</label>
                     <input 
@@ -249,7 +274,7 @@
 
                 </div>
 
-                <div id ="inactivo_section" class="hidden">
+                <div id ="inactivo_section" class="hidden box-variables">
 
                     <label for="recibe_pension">¿Recibe una pensión mensual?</label>
                     <select id="recibe_pension" name="recibe_pension" required>
@@ -263,8 +288,29 @@
                 
                 </div>
 
-                <label for="valor_fondo">Valor de fondo de pensión actual (S/.)</label>
-                <input type="number" id="valor_fondo" name="valor_fondo">
+                <label for="es_aportante">¿Es aportante a algún Fondo de pension?</label>
+                <select id="es_aportante" name="es_aportante" required>
+                    <option value="">Seleccione...</option>
+                    <option value="si">Sí</option>
+                    <option value="no">No</option>
+                </select>
+                
+                <div id = "Aportante_section" class="hidden box-variables">
+                                       
+                    <label for="tipo_fondo">Tipo de fondo de pensión</label>
+                    <select id="tipo_fondo" name="tipo_fondo" required>
+                        <option value="">Seleccione...</option>
+                        <option value="AFP">AFP</option>
+                        <option value="ONP">ONP</option>
+                        <option value="Otros">Otros</option>
+                    </select>
+                    
+                    <label for="valor_fondo">Valor de fondo de pensión actual (S/.)</label>
+                    <input type="number" id="valor_fondo" name="valor_fondo">
+                
+                </div>
+
+                
 
 
 
@@ -280,7 +326,7 @@
                         <option value="Jubilado_conyugue">Jubilado</option>
                     </select>
 
-                    <div id ="activo_section_conyugue" class="hidden">
+                    <div id ="activo_section_conyugue" class="hidden box-variables">
                         <label for="sueldo_titular_conyugue">Sueldo del cónyugue (mensual y en S/.)</label>
                         <input type="number" id="sueldo_titular_conyugue" name="sueldo_titular_conyugue" required>
 
@@ -302,7 +348,7 @@
 
                     </div>
 
-                    <div id ="inactivo_section_conyugue" class="hidden">
+                    <div id ="inactivo_section_conyugue" class="hidden box-variables">
 
                         <label for="recibe_pension_conyugue">¿El cónyugue recibe una pensión mensual?</label>
                         <select id="recibe_pension_conyugue" name="recibe_pension_conyugue" required>
@@ -313,11 +359,11 @@
 
                         <label for="ingreso_pension_conyugue">Pensión promedio mensual del cónyugue (S/.)</label>
                         <input type="number" id="ingreso_pension_conyugue" name="ingreso_pension_conyugue">
-                    
-                    </div>
+                                        
+                        <label for="valor_fondo_conyugue">Valor de fondo de pensión actual del cónyugue (S/.)</label>
+                        <input type="number" id="valor_fondo_conyugue" name="valor_fondo_conyugue">
 
-                    <label for="valor_fondo_conyugue">Valor de fondo de pensión actual del cónyugue (S/.)</label>
-                    <input type="number" id="valor_fondo_conyugue" name="valor_fondo_conyugue">
+                    </div>
                 
                 </div>
 
@@ -325,7 +371,7 @@
                 <input type="number" id="alquileres" name="alquileres">
 
                 <label for="dividendos">Dividendos de negocios (anual y en US$)</label>
-                <input type="number" id="otros_ingresos" name="otros_ingresos">
+                <input type="number" id="dividendos" name="dividendos">
 
                 <label for="otros_ingresos">Otros ingresos (anual y en US$)</label>
                 <input type="number" id="otros_ingresos" name="otros_ingresos">
@@ -451,6 +497,9 @@
         const agregarHijo = document.getElementById('agregar_hijo');
         const listaHijos = document.getElementById('lista_hijos');
 
+        const agregarPropiedad = document.getElementById('agregar_propiedad');
+        const listaPropiedades = document.getElementById('lista_propiedades');
+
         const participacionSelect = document.getElementById('tiene_participacion');
         const participacionSection = document.getElementById('participacion_section');
         const agregarParticipacion = document.getElementById('agregar_participacion');
@@ -474,6 +523,9 @@
         const activoSection = document.getElementById('activo_section');
         const inactivoSection = document.getElementById('inactivo_section');
 
+        const esAportanteSelect = document.getElementById('es_aportante');
+        const aportanteSection = document.getElementById('Aportante_section');
+
         const pensionistaSelect = document.getElementById('recibe_pension');
         const situacionSelect = document.getElementById('situacion_laboral_titular');
 
@@ -484,9 +536,9 @@
         const situacionSelectConyugue = document.getElementById('situacion_laboral_conyugue');
 
 
-
         let currentStep = 0;
         let contadorHijos = 0;
+        let contadorPropiedad = 0;
         let contadorParticipacion = 0;
         let contadorInversion = 0;
         let contadorCreditos = 0;
@@ -501,6 +553,17 @@
                 document.getElementById('monto_seguro').value = '';
                 document.getElementById('monto_retorno').value = '';
                 document.getElementById('anhios_retiro').value = '';
+            }
+        });
+
+        //Mostrar / ocultar sección de aportante
+        esAportanteSelect.addEventListener('change', () => {
+            if (esAportanteSelect.value === 'si') {
+                aportanteSection.classList.remove('hidden');
+            } else {
+                aportanteSection.classList.add('hidden');
+                document.getElementById('tipo_fondo').value = '';
+                document.getElementById('valor_fondo').value = '';
             }
         });
 
@@ -681,14 +744,17 @@
 
             objetivoDiv.querySelector(".delete-objetivo").addEventListener("click", () => {
                 objetivoDiv.remove();
+                contadorObjetivos--;
             });
         });
 
         //Agregar inversion dinámicamente
         agregarInversion.addEventListener('click', () => {
             contadorInversion++;
+
             const inversionDiv = document.createElement('div');
             inversionDiv.classList.add('child-card');
+
             inversionDiv.innerHTML = `
                 <div class="child-header">
                     <h4>Inversión ${contadorInversion}</h4>
@@ -712,11 +778,113 @@
                     <option value="Moderado">Moderado</option>
                     <option value="Dinamico">Dinámico</option>
                 </select>
+
+                <div class="multi-slider">
+                    <div class="bar">
+                        <div class="seg fija"></div>
+                        <div class="seg variable"></div>
+                        <div class="seg altern"></div>
+                        <div class="seg cash"></div>
+                    </div>
+
+                    <input type="range" min="0" max="100" value="25" class="handle h1">
+                    <input type="range" min="0" max="100" value="50" class="handle h2">
+                    <input type="range" min="0" max="100" value="75" class="handle h3">
+                </div>
+
+                <div class="valores"></div>
             `;
+
             listainversion.appendChild(inversionDiv);
+
+            // Seleccionar sliders y segmentos DENTRO de la tarjeta
+            const h1 = inversionDiv.querySelector(".h1");
+            const h2 = inversionDiv.querySelector(".h2");
+            const h3 = inversionDiv.querySelector(".h3");
+
+            const sF = inversionDiv.querySelector(".fija");
+            const sV = inversionDiv.querySelector(".variable");
+            const sA = inversionDiv.querySelector(".altern");
+            const sC = inversionDiv.querySelector(".cash");
+
+            const out = inversionDiv.querySelector(".valores");
+
+            function update() {
+                if (+h1.value > +h2.value) h1.value = h2.value;
+                if (+h2.value > +h3.value) h2.value = h3.value;
+
+                const p1 = +h1.value;
+                const p2 = +h2.value;
+                const p3 = +h3.value;
+
+                const fija  = p1;
+                const variable = p2 - p1;
+                const altern = p3 - p2;
+                const cash = 100 - p3;
+
+                sF.style.width = fija + "%";
+                sV.style.width = variable + "%";
+                sA.style.width = altern + "%";
+                sC.style.width = cash + "%";
+
+                out.innerHTML = `
+                    Fija: ${fija}%<br>
+                    Variable: ${variable}%<br>
+                    Alternativos: ${altern}%<br>
+                    Cash: ${cash}%`;
+            }
+
+            // Listeners para esta inversión
+            [h1, h2, h3].forEach(h => h.addEventListener("input", update));
+
+            update();
 
             inversionDiv.querySelector(".delete-inversion").addEventListener("click", () => {
                 inversionDiv.remove();
+                contadorInversion--;
+            });
+        });
+
+
+        //Agregar propiedad dinámicamente
+        agregarPropiedad.addEventListener('click', () => {
+            contadorPropiedad++;
+            const propiedadDiv = document.createElement('div');
+            propiedadDiv.classList.add('child-card');
+            propiedadDiv.innerHTML = `
+                <div class="child-header">
+                    <h4>Propiedad ${contadorPropiedad}</h4>
+                    <button type="button" class="delete-propiedad">✖</button>
+                </div>
+
+                <label>Tipo de propiedad:</label>
+                <select name="propiedad_tipo_${contadorPropiedad}" required>
+                    <option value="">Seleccione...</option>
+                    <option>Casa</option>
+                    <option>Departamento</option>
+                    <option>Terreno</option>
+                    <option>Local comercial</option>
+                    <option>Oficina/Edificio oficinas</option>
+                    <option>Otro</option>
+                </select>
+                
+                <label>Ubicación de la propiedad:</label>
+                <select name="propiedad_ubicacion_${contadorPropiedad}" required>
+                    <option value="">Seleccione...</option>
+                    <option value="false">Local</option>
+                    <option value="true">Extranjera</option>
+                </select>
+
+                <label>Valor de la propiedad (US$):</label>
+                <input type="number" name="propiedad_valor_${contadorPropiedad}" min="0" required>
+            `;
+            listaPropiedades.appendChild(propiedadDiv);
+            [h1,h2,h3].forEach(h => h.addEventListener("input", update));
+
+            update();
+            propiedadDiv.querySelector(".delete-propiedad").addEventListener("click", () => {
+                propiedadDiv.remove();
+                contadorPropiedad--;
             });
         });
 
@@ -747,6 +915,7 @@
 
             participacionDiv.querySelector(".delete-participacion").addEventListener("click", () => {
                 participacionDiv.remove();
+                contadorParticipacion--;
             });
         });
 
@@ -775,15 +944,58 @@
                     <option>Otros</option>
                 </select>
 
-                <label>Costo anual (S/):</label>
+                <label>Costo anual de educación (S/):</label>
                 <input type="number" name="hijo_costo_${contadorHijos}" min="0" required>
+
+                <div class="universidad-extra" style="display: none; margin-top: 10px;">
+                    <label>¿Desea anualizar el pago futuro de la universidad?</label>
+                    <select class="anualizar-select" name="hijo_anualizar_${contadorHijos}">
+                        <option value="">Seleccione...</option>
+                        <option value="si">Sí</option>
+                        <option value="no">No</option>
+                    </select>
+
+                    <div class="costo-universidad" style="display: none; margin-top: 10px;">
+                        <label>Costo anualizado de la universidad (S/):</label>
+                        <input type="number" name="hijo_anualizado_${contadorHijos}" min="0">
+                    </div>
+                </div>
             `;
             listaHijos.appendChild(hijoDiv);
 
             hijoDiv.querySelector(".delete-hijo").addEventListener("click", () => {
                 hijoDiv.remove();
             });
+
+            //Logica para mostrar campos adicionales según educación
+            const educacionSelect = hijoDiv.querySelector(`select[name="hijo_educacion_${contadorHijos}"]`);
+            const universidadExtra = hijoDiv.querySelector(".universidad-extra");
+            const anualizarSelect = hijoDiv.querySelector(`select[name="hijo_anualizar_${contadorHijos}"]`);
+            const costoUniversidad = hijoDiv.querySelector(".costo-universidad");
+
+            educacionSelect.addEventListener("change", () => {
+                if (educacionSelect.value === "Kinder" || educacionSelect.value === "Colegio") {
+                    universidadExtra.style.display = "block";
+                } else {
+                    universidadExtra.style.display = "none";
+                    costoUniversidad.style.display = "none"; // ocultar si cambia de opción
+                    anualizarSelect.value = "";
+                }
+            });
+
+            anualizarSelect.addEventListener("change", () => {
+                if (anualizarSelect.value === "si") {
+                    costoUniversidad.style.display = "block";
+                } else {
+                    costoUniversidad.style.display = "none";
+                }
+            });
+           
         });
+
+
+        
+
 
         // Agregar créditos dinámicamente
         agregarCredito.addEventListener('click', () => {
@@ -825,7 +1037,7 @@
                 <input type="number" name="credito_pago_mensual[]" min="0" required>
             `;
             listaCredito.appendChild(creditoDiv);
-
+            
             creditoDiv.querySelector(".delete-credito").addEventListener("click", () => {
                 creditoDiv.remove();
             });
@@ -843,6 +1055,48 @@
             progress.style.width = ((currentStep + 1) / steps.length) * 100 + "%";
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
+        
+        // Consulta a Salesforce
+        async function consultarSalesforce(tipo_id, numero_id) {
+
+            try {
+                const resp = await fetch("/salesforce/cliente", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ tipo_id, numero_id })
+                });
+
+                if (!resp.ok) return null;  // Error del servidor → ignorar
+
+                const data = await resp.json();
+
+                if (!data || !data.encontrado) return null; // No existe → tratar como vacío
+                
+                return data; // Cliente encontrado
+            } catch (error) {
+                return null; // Error → ignorar y avanzar normal
+            }
+        }
+
+        document.getElementById("btn-siguiente-1").addEventListener("click", async () => {
+
+    
+            const tipo_id = document.getElementById("tipo_id").value;
+            const numero_id = document.getElementById("numero_id").value;
+
+            const clienteSF = await consultarSalesforce(tipo_id, numero_id);
+
+            if (clienteSF) {
+                // 🎯 Cliente EXISTE → saltar step perfilamiento
+                console.log("Perfil encontrado:", clienteSF);
+                changeStep(2); // 🔥 saltamos 1 step adicional
+            } else {
+                // ❌ No encontrado o error → avanzar normal
+                changeStep(1);
+            }
+        });
+
+
 
         document.getElementById("btnFinalizar").addEventListener("click", async () => {
             // Aquí puedes reutilizar TODO el bloque del script anterior (el que arma el JSON completo)
@@ -856,6 +1110,7 @@
                 correo: document.getElementById("correo").value,
                 fecha_nacimiento: document.getElementById("fecha_nacimiento").value,
                 estado_civil: document.getElementById("estado_civil").value,
+                edad_jubilacion: document.getElementById("edad_jubilacion").value,
                 codigo: document.getElementById("codigo").value,
                 hub: document.getElementById("hub").value,
                 objetivos_personales: document.getElementById("objetivos").value
@@ -882,8 +1137,24 @@
             const hijos = Array.from(document.querySelectorAll("#lista_hijos .child-card")).map(div => ({
                 fecha_nacimiento: div.querySelector("[name^='hijo_fecha_']").value,
                 educacion: div.querySelector("[name^='hijo_educacion_']").value,
-                costo_anual: div.querySelector("[name^='hijo_costo_']").value
+                costo_anual: div.querySelector("[name^='hijo_costo_']").value,
+                anualizado_universidad: div.querySelector("[name^='hijo_anualizar_']").value,
+                costo_universidad: div.querySelector("[name^='hijo_anualizado_']").value
             }));
+            
+            // ===== Propiedades =====
+            const propiedades = Array.from(document.querySelectorAll("#lista_propiedades .child-card")).map(div => ({
+                extranjera: div.querySelector("[name^='propiedad_ubicacion_']").value,
+                valor: div.querySelector("[name^='propiedad_valor_']").value,
+                tipo: div.querySelector("[name^='propiedad_tipo_']").value
+                
+            }));
+
+            // ===== Otras Propiedades =====
+            const otras_propiedades = {
+                otros_inmuebles: document.getElementById("otros_inmuebles").value,
+                inmuebles_inversion: document.getElementById("inmuebles_inversion").value
+            };
 
             // ===== Participaciones =====
             const participaciones = Array.from(document.querySelectorAll("#lista_participacion .child-card")).map(div => ({
@@ -934,11 +1205,10 @@
                 ahorro_corriente: document.getElementById("ahorros_corrientes").value,
                 sueldo_titular: document.getElementById("sueldo_titular").value,
                 ingreso_promedio: document.getElementById("ingreso_promedio").value,
-                edad_jubilacion: document.getElementById("edad_jubilacion").value,
-                valor_fondo_pension: document.getElementById("valor_fondo").value,
                 alquileres: document.getElementById("alquileres").value,
                 dividendos: document.getElementById("otros_ingresos").value,
                 ahorro_familiar: document.getElementById("ahorro_familiar").value,
+                utilidades_bonos: document.getElementById("utilidades_titular").value
             };
 
             // ===== Seguro de vida =====
@@ -950,6 +1220,18 @@
                     anhos_retiro: document.getElementById("anhios_retiro").value
                 }
                 : null;
+
+
+            const perfil_riesgo = document.getElementById("perfil_cliente").value;
+
+            const pensiones = {
+                es_aportante: document.getElementById("es_aportante").value,
+                tipo_fondo: document.getElementById("tipo_fondo").value,
+                valor_fondo: document.getElementById("valor_fondo").value,
+                porcentaje_pension: 0.06,
+                inflacion_porcentual: 0.03
+            };
+            
             // ... (resto del JSON igual al bloque anterior)
             // termina con:
             const datos = {
@@ -957,12 +1239,16 @@
                 conyuge,
                 hijos,
                 participaciones,
+                propiedades,
+                otras_propiedades,
                 inversiones,
                 creditos,
                 objetivos,
                 gastos,
                 patrimonio,
-                seguro_vida
+                seguro_vida,
+                perfil_riesgo,
+                pensiones
             };
 
             console.log("JSON generado:", datos);
@@ -982,8 +1268,14 @@
                 const respuesta = await res.json();
                 console.log("Guardado:", respuesta);
 
+                localStorage.setItem("resultados_financieros", JSON.stringify(respuesta));
+                localStorage.setItem("datos_originales", JSON.stringify(datos));
+
+                // Redirigir a página de resultados
+                window.location.href = "/resultados";
+
                 // Mostrar resultados en la pantalla final
-                const contenedor = document.getElementById("resultado-container");
+                /*const contenedor = document.getElementById("resultado-container");
                 contenedor.innerHTML = `
                 <h3>Resumen Financiero</h3>
                 <p><strong>Ingresos:</strong> ${respuesta.ingresos_totales}</p>
@@ -994,7 +1286,7 @@
 
                 // Avanza al paso final
                 document.querySelector("#step-5").classList.remove("active");
-                document.querySelector("#step-final").classList.add("active");
+                document.querySelector("#step-final").classList.add("active");*/
             } else {
                 alert("Error al guardar los datos");
             }
