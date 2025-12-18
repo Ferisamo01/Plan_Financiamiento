@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Resultados Financieros</title>
+    <title>Resultados</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
 </head>
@@ -10,7 +10,7 @@
 
     <header class="form-header">
         <img src="{{ url_for('static', filename='img/zest_logo.png') }}" alt="Zest Logo" class="logo">
-        <h1>Resultados Financieros</h1>
+        <h1>Resultados de Plan Financiero</h1>
     </header>
 
 <div id="resumen" class="card"></div>
@@ -43,6 +43,16 @@
         <p><strong>Activos Liquidos:</strong> S/. ${resultados.activos_liquidos}</p>
         <p><strong>Activos No Liquidos:</strong> S/. ${resultados.activos_no_liquidos}</p>
         <p><strong>AFP + Aportes Futuros</strong> S/. ${resultados.pensiones}</p>
+
+
+        <p><strong>Inversiones On</Strong> S/. ${resultados.inversiones_on}</p>
+        <p><strong>Inversiones Off</strong> S/. ${resultados.inversiones_off}</p>
+        
+        <p><strong>Fija</strong> S/. ${resultados.dist_fija}</p>
+        <p><strong>Variable</strong> S/. ${resultados.dist_variable}</p>
+        <p><strong>alternativo</strong> S/. ${resultados.dist_alternativos}</p>
+        <p><strong>Cash</strong> S/. ${resultados.dist_cash}</p>
+
     `;
 
     // ================================

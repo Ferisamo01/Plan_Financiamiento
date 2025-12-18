@@ -1,29 +1,57 @@
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #f5f7fa;
+    background-color: #cecece;
     margin: 0;
     padding: 0;
 }
 
-/* Encabezado */
+/* Encabezado 
 .form-header {
-    background-color: #a5c09c;
+    background-color: black;
     color: white;
     text-align: center;
-    padding: 20px;
+    padding: 25px;
 }
 
 .logo {
     width: 100px;
     display: block;
-    margin: 0 auto 10px;
+    margin: 0 auto 30px;
+    margin-top: 30px;
+    transform: scale(2.0);
+    transform-origin: center;
 }
+*/
+.form-header {
+    background-color: black;
+    color: white;
+    padding: 25px;
+
+    display: flex;               /* elementos en línea */
+    align-items: center;         /* centra verticalmente */
+    justify-content: center;     /* centra horizontalmente */
+    gap: 40px;                   /* espacio entre logo y título */
+}
+
+.logo {
+    width: 100px;
+    transform: scale(1.8);       /* si quieres que se vea más grande */
+    transform-origin: center;
+    
+
+    /* QUITAR estas tres porque causan el desalineado:
+       display: block;
+       margin: 0 auto 30px;
+       margin-top: 30px;
+    */
+}
+
 
 /* Contenedor principal */
 .form-container {
     max-width: 700px;
     margin: 30px auto;
-    background: white;
+    background: rgb(230, 217, 217);
     padding: 30px;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -45,8 +73,17 @@ label {
     font-weight: 500;
 }
 
-input, select, textarea {
+input, textarea {
     width: 97%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+    font-size: 1rem;
+}
+
+select {
+    width: 100%;
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #ccc;
@@ -62,8 +99,8 @@ input:focus, select:focus, textarea:focus {
 
 /* Botones */
 button {
-    background-color: #a5c09c;
-    color: white;
+    background-color: #dabe04;
+    color: black;
     border: none;
     padding: 10px 20px;
     border-radius: 10px;
@@ -73,7 +110,7 @@ button {
 }
 
 button:hover {
-    background-color: #a5c09c;
+    background-color: #cecece;
 }
 
 .buttons {
@@ -93,7 +130,7 @@ button:hover {
 #progress {
     height: 10px;
     width: 12.5%;
-    background-color: #0d6efd;
+    background-color: #dabe04;
     transition: width 0.3s ease;
 }
 
@@ -118,20 +155,18 @@ button:hover {
     align-items: center;
 }
 
-.delete-hijo,
-.delete-inversion {
+.delete-childs {
     background: transparent;
     border: none;
     color: #d33;
-    font-size: 1.2rem;
+    font-size: 1.0rem;
     cursor: pointer;
     font-weight: bold;
 }
 
-.delete-hijo:hover,
-.delete-inversion:hover {
+.delete-childs:hover {
     color: #a00;
-    transform: scale(1.1);
+    transform: scale(0.8);
 }
 
 
@@ -160,30 +195,33 @@ button:hover {
 .multi-slider {
     position: relative;
     width: 94%;
-    height: 40px;
-    margin: 15px 0;
+    height: 50px;
+    margin: 15px 0 15px 0;
 }
+
+
 
 .bar {
     position: absolute;
     top: 18px;
     left: 10px;
     right: -10px;
-    height: 24px;
-    border-radius: 12px;
+    height: 15px;
+    border-radius: 10px;
     display: flex;
+    overflow: hidden;
     z-index: 1;
 }
 
 .seg {
     height: 20px;
-    
+    border-radius: 0;   
 }
 
-.fija      { background: #4caf50; }
-.variable  { background: #2196f3; }
-.altern    { background: #9c27b0; }
-.cash      { background: #ffc107; }
+.fija      { background: #dabe04; }
+.variable  { background: #1e52cc; }
+.altern    { background: #ad975b; }
+.cash      { background: #f6ac23; }
 
 .handle {
     position: absolute;
@@ -191,18 +229,50 @@ button:hover {
     pointer-events: none;
     appearance: none;
     -webkit-appearance: none;
-    height: 25px;
+    height: 15px;
     background: none;
     z-index: 2;
+    transform: translateY(2px);
 }
 
 .handle::-webkit-slider-thumb {
     pointer-events: all;
     -webkit-appearance: none;
-    background: #494741;
-    width: 16px;
-    height: 16px;
+    background: #ffffff;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
-    border: 2px solid #333;
+    border: 3px solid #cdcdcd;
     cursor: pointer;
+}
+
+.valores {
+    margin-top: 8px;
+    font-size: 0.9 rem;
+    line-height: 1.6;
+}
+
+.tag {
+    padding: 3px 8px;
+    border-radius: 6px;
+    color: white;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+/* Colores asociados igual que los segmentos */
+.fija-tag {
+    background-color: #dabe04;
+}
+
+.variable-tag {
+    background-color: #1e52cc;
+}
+
+.altern-tag {
+    background-color: #ad975b;
+}
+
+.cash-tag {
+    background-color: #f6ac23;
 }

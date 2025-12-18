@@ -28,7 +28,7 @@ def obtener_token():
     response = requests.post(url, data=data)
     return response.json()
 
-print("Hola", obtener_token())
+#print("Hola", obtener_token())
 
 @app.post("/salesforce/cliente")
 def consultar_cliente_salesforce():
@@ -71,6 +71,15 @@ def resultados():
 def guardar_datos():
     try:
         data = request.get_json(force=True)
+
+        def to_float(v):
+            try:
+                return float(v)
+            except (TypeError, ValueError):
+                return 0.0
+            
+        def to_bool(v):
+            return str(v).lower() == "true"
         print("📦 Datos recibidos:", data)  # para depuración
 
         # ===== Validación mínima =====
@@ -105,31 +114,50 @@ def guardar_datos():
         
 
         # Convertir valores a float (si vienen vacíos o texto, usar 0)
-        def to_float(v):
-            try:
-                return float(v)
-            except (TypeError, ValueError):
-                return 0.0
-            
-        def to_bool(v):
-            return str(v).lower() == "true"
+
             
         educacion_hijos = sum(to_float(hijo.get("costo_total")) for hijo in lista_hijos)
-
         ahorros = to_float(patrimonio.get("ahorros_corrientes"))
+        
+        #Participaciones
+        participaciones = sum(to_float(participacion.get("valor")) for participacion in lista_participaciones)
 
+        #Inversiones
         inversiones_on = sum(
             to_float(inv.get("valor"))
             for inv in lista_inversiones
-            if not to_bool(inv.get("extranjera"))
+                if not to_bool(inv.get("extranjera"))
         )
 
         inversiones_off = sum(
             to_float(inv.get("valor"))
             for inv in lista_inversiones
-            if to_bool(inv.get("extranjera"))
+                if to_bool(inv.get("extranjera"))
         )
 
+        inversiones_fija = sum(
+            to_float(inv.get("valor")) * (to_float(inv.get("dist_fija")) / 100)
+            for inv in lista_inversiones
+        )
+
+        inversiones_variable = sum(
+            to_float(inv.get("valor")) * (to_float(inv.get("dist_variable")) / 100)
+            for inv in lista_inversiones
+        )
+
+        inversiones_alternativos = sum(
+            to_float(inv.get("valor")) * (to_float(inv.get("dist_alternativos")) / 100)
+            for inv in lista_inversiones
+        )
+
+        inversiones_cash = sum(
+            to_float(inv.get("valor")) * (to_float(inv.get("dist_cash")) / 100)
+            for inv in lista_inversiones
+        )
+
+
+
+        #Propiedades
         propiedades_on = sum(
             to_float(prop.get("valor"))
             for prop in lista_propiedades
@@ -147,8 +175,10 @@ def guardar_datos():
             to_float(otras_propiedades.get("inmuebles_inversion")) 
         )
 
+
+
         activos_liquidos = ahorros + inversiones_on + inversiones_off
-        activos_no_liquidos = propiedades_on + propiedades_off + otras_propiedades_valor
+        activos_no_liquidos = propiedades_on + propiedades_off + otras_propiedades_valor + participaciones
 
         anhos_aporte = to_float(titular.get("edad_jubilacion")) - edad(titular.get("fecha_nacimiento"))
         pensiones = (
@@ -185,6 +215,14 @@ def guardar_datos():
             "activos_liquidos": round(activos_liquidos, 2),
             "activos_no_liquidos": round(activos_no_liquidos, 2),
             "pensiones": round(pensiones, 2),
+            
+            "inversiones_on": round(inversiones_on, 2),
+            "inversiones_off": round(inversiones_off, 2),
+            "dist_fija": round(inversiones_fija, 2),
+            "dist_variable": round(inversiones_variable, 2),
+            "dist_alternativos": round(inversiones_alternativos, 2),
+            "dist_cash": round(inversiones_cash, 2),
+
             "graficos_html": f"""
                 <div style='margin-top:20px'>
                     <h4>Visualización rápida:</h4>

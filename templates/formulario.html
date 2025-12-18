@@ -9,7 +9,7 @@
 <body>
     <header class="form-header">
         <img src="{{ url_for('static', filename='img/zest_logo.png') }}" alt="Zest Logo" class="logo">
-        <h1>Plan de Financiamiento Zest</h1>
+        <h1>Plan de Financiamiento</h1>
     </header>
 
     <main class="form-container">
@@ -226,7 +226,7 @@
 
                 <div id="participacion_section" class="hidden">
                     <div id="lista_participacion"></div>
-                    <button type="button" class="add-btn" id="agregar_participacion">Agregar Particpación</button>
+                    <button type="button" class="add-btn" id="agregar_participacion">Agregar Participación</button>
                 </div>
 
                 <label for="tiene_inversion">¿Cuenta con algún portafolio de inversión?</label>
@@ -318,7 +318,7 @@
                     <h3>Patrimonio e Inversiones Cónyugue</h3>
 
                     <label for="situacion_laboral_conyugue">Situación Laboral del cónyugue</label>
-                    <select id="situacion_laboral_conyugue" name="situacion_laboral_titular" required>
+                    <select id="situacion_laboral_conyugue" name="situacion_laboral_conyugue" required>
                         <option value="">Seleccione...</option>
                         <option value="Empleado_conyugue">Empleado</option>
                         <option value="Independiente_conyugue">Independiente</option>
@@ -720,7 +720,7 @@
             objetivoDiv.innerHTML = `
                 <div class="child-header">
                     <h4>Objetivo ${contadorObjetivos}</h4>
-                    <button type="button" class="delete-objetivo">✖</button>
+                    <button type="button" class="delete-childs">✖</button>
                 </div>
 
                 <label>Objetivo Financiero a cumplir:</label>
@@ -742,7 +742,7 @@
             `;
             listaObjetivos.appendChild(objetivoDiv);
 
-            objetivoDiv.querySelector(".delete-objetivo").addEventListener("click", () => {
+            objetivoDiv.querySelector(".delete-childs").addEventListener("click", () => {
                 objetivoDiv.remove();
                 contadorObjetivos--;
             });
@@ -758,7 +758,7 @@
             inversionDiv.innerHTML = `
                 <div class="child-header">
                     <h4>Inversión ${contadorInversion}</h4>
-                    <button type="button" class="delete-inversion">✖</button>
+                    <button type="button" class="delete-childs">✖</button>
                 </div>
 
                 <label>Procedencia de la inversión:</label>
@@ -790,6 +790,15 @@
                     <input type="range" min="0" max="100" value="25" class="handle h1">
                     <input type="range" min="0" max="100" value="50" class="handle h2">
                     <input type="range" min="0" max="100" value="75" class="handle h3">
+                    
+
+                    <input type="hidden" class="fija_val">
+                    <input type="hidden" class="variable_val">
+                    <input type="hidden" class="altern_val">
+                    <input type="hidden" class="cash_val">
+
+
+                    
                 </div>
 
                 <div class="valores"></div>
@@ -808,6 +817,11 @@
             const sC = inversionDiv.querySelector(".cash");
 
             const out = inversionDiv.querySelector(".valores");
+
+            const fijaInput = inversionDiv.querySelector(".fija_val");
+            const variableInput = inversionDiv.querySelector(".variable_val");
+            const alternInput = inversionDiv.querySelector(".altern_val");
+            const cashInput = inversionDiv.querySelector(".cash_val");
 
             function update() {
                 if (+h1.value > +h2.value) h1.value = h2.value;
@@ -828,10 +842,17 @@
                 sC.style.width = cash + "%";
 
                 out.innerHTML = `
-                    Fija: ${fija}%<br>
-                    Variable: ${variable}%<br>
-                    Alternativos: ${altern}%<br>
-                    Cash: ${cash}%`;
+                    <span class="tag fija-tag">Fija: ${fija}%</span><br>
+                    <span class="tag variable-tag">Variable: ${variable}%</span><br>
+                    <span class="tag altern-tag">Alternativos: ${altern}%</span><br>
+                    <span class="tag cash-tag">Cash: ${cash}%</span>
+                `;
+                
+                fijaInput.value = fija;
+                variableInput.value = variable;
+                alternInput.value = altern;
+                cashInput.value = cash;
+
             }
 
             // Listeners para esta inversión
@@ -839,22 +860,39 @@
 
             update();
 
-            inversionDiv.querySelector(".delete-inversion").addEventListener("click", () => {
+            inversionDiv.querySelector(".delete-childs").addEventListener("click", () => {
                 inversionDiv.remove();
                 contadorInversion--;
             });
         });
 
 
-        //Agregar propiedad dinámicamente
+        function renumerarPropiedades() {
+            const cards = document.querySelectorAll("#listaPropiedades .child-card");
+
+            cards.forEach((card, index) => {
+                const num = index + 1;
+
+                // Cambiar el título
+                card.querySelector("h4").textContent = `Propiedad ${num}`;
+
+                // Renumerar los name=""
+                card.querySelector('select[name^="propiedad_tipo_"]').name = `propiedad_tipo_${num}`;
+                card.querySelector('select[name^="propiedad_ubicacion_"]').name = `propiedad_ubicacion_${num}`;
+                card.querySelector('input[name^="propiedad_valor_"]').name = `propiedad_valor_${num}`;
+            });
+        }
+
         agregarPropiedad.addEventListener('click', () => {
             contadorPropiedad++;
+
             const propiedadDiv = document.createElement('div');
             propiedadDiv.classList.add('child-card');
+
             propiedadDiv.innerHTML = `
                 <div class="child-header">
                     <h4>Propiedad ${contadorPropiedad}</h4>
-                    <button type="button" class="delete-propiedad">✖</button>
+                    <button type="button" class="delete-childs">✖</button>
                 </div>
 
                 <label>Tipo de propiedad:</label>
@@ -878,15 +916,17 @@
                 <label>Valor de la propiedad (US$):</label>
                 <input type="number" name="propiedad_valor_${contadorPropiedad}" min="0" required>
             `;
-            listaPropiedades.appendChild(propiedadDiv);
-            [h1,h2,h3].forEach(h => h.addEventListener("input", update));
 
-            update();
-            propiedadDiv.querySelector(".delete-propiedad").addEventListener("click", () => {
+            listaPropiedades.appendChild(propiedadDiv);
+
+            if (typeof update === "function") update();
+
+            propiedadDiv.querySelector(".delete-childs").addEventListener("click", () => {
                 propiedadDiv.remove();
-                contadorPropiedad--;
+                renumerarPropiedades();
             });
         });
+
 
         //Agregar participacion dinámicamente
         agregarParticipacion.addEventListener('click', () => {
@@ -896,7 +936,7 @@
             participacionDiv.innerHTML = `
                 <div class="child-header">
                     <h4>Participación ${contadorParticipacion}</h4>
-                    <button type="button" class="delete-participacion">✖</button>
+                    <button type="button" class="delete-childs">✖</button>
                 </div>
 
 
@@ -913,7 +953,7 @@
             `;
             listaparticipacion.appendChild(participacionDiv);
 
-            participacionDiv.querySelector(".delete-participacion").addEventListener("click", () => {
+            participacionDiv.querySelector(".delete-childs").addEventListener("click", () => {
                 participacionDiv.remove();
                 contadorParticipacion--;
             });
@@ -927,7 +967,7 @@
             hijoDiv.innerHTML = `
                 <div class="child-header">
                     <h4>Hijo ${contadorHijos}</h4>
-                    <button type="button" class="delete-hijo">✖</button>
+                    <button type="button" class="delete-childs">✖</button>
                 </div>
 
                 <label>Fecha de nacimiento:</label>
@@ -963,7 +1003,7 @@
             `;
             listaHijos.appendChild(hijoDiv);
 
-            hijoDiv.querySelector(".delete-hijo").addEventListener("click", () => {
+            hijoDiv.querySelector(".delete-childs").addEventListener("click", () => {
                 hijoDiv.remove();
             });
 
@@ -1005,7 +1045,7 @@
             creditoDiv.innerHTML = `
                 <div class="child-header">
                     <h4>Crédito ${contadorCreditos}</h4>
-                    <button type="button" class="delete-credito">✖</button>
+                    <button type="button" class="delete-childs">✖</button>
                 </div>
 
                 <label>Tipo de crédito:</label>
@@ -1038,7 +1078,7 @@
             `;
             listaCredito.appendChild(creditoDiv);
             
-            creditoDiv.querySelector(".delete-credito").addEventListener("click", () => {
+            creditoDiv.querySelector(".delete-childs").addEventListener("click", () => {
                 creditoDiv.remove();
             });
         });
@@ -1165,8 +1205,13 @@
             const inversiones = Array.from(document.querySelectorAll("#lista_inversion .child-card")).map(div => ({
                 extranjera: div.querySelector("[name^='inversion_extranjera_']").value,
                 valor: div.querySelector("[name^='inversion_valor_']").value,
-                tipo: div.querySelector("[name^='inversion_tipo_']").value
+                tipo: div.querySelector("[name^='inversion_tipo_']").value,
+                dist_fija: div.querySelector(".fija_val").value,
+                dist_variable: div.querySelector(".variable_val").value,
+                dist_alternativos: div.querySelector(".altern_val").value,
+                dist_cash: div.querySelector(".cash_val").value
             }));
+
 
             // ===== Créditos =====
             const creditos = Array.from(document.querySelectorAll("#lista_creditos .child-card")).map(div => ({
