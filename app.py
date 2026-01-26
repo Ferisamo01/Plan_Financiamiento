@@ -88,6 +88,7 @@ def guardar_datos():
 
         # ===== Simulación de cálculos financieros =====
         patrimonio = data.get("patrimonio", {})
+        
         otras_propiedades = data.get("otras_propiedades", {})
         lista_hijos = data.get("hijos", [])
         lista_inversiones = data.get("inversiones", [])
@@ -96,6 +97,9 @@ def guardar_datos():
         perfil_riesgo = data.get("perfil_riesgo", "")
         #tasa = tasas(perfil_riesgo)
         gastos = data.get("gastos", {})
+        lista_creditos =  data.get("creditos", [])
+        seguro_vida = data.get("seguro_vida") or {}
+
         titular = data.get("titular", {})
         
         tasa =  to_float(data.get("pensiones", {}).get("porcentaje_pension"))
@@ -117,6 +121,8 @@ def guardar_datos():
 
             
         educacion_hijos = sum(to_float(hijo.get("costo_total")) for hijo in lista_hijos)
+
+
         ahorros = to_float(patrimonio.get("ahorros_corrientes"))
         
         #Participaciones
@@ -175,12 +181,23 @@ def guardar_datos():
             to_float(otras_propiedades.get("inmuebles_inversion")) 
         )
 
+        ingresos_conyuge = 0.0
 
+        #Conyuge
+        if to_bool(titular.get("estado_civil") == "Casado"):
+            conyuge = data.get("conyuge", {})
+            ingresos_conyuge = to_float(conyuge.get("sueldo_titular_conyugue")) + to_float(conyuge.get("utilidades_titular_conyugue"))
 
         activos_liquidos = ahorros + inversiones_on + inversiones_off
         activos_no_liquidos = propiedades_on + propiedades_off + otras_propiedades_valor + participaciones
 
-        anhos_aporte = to_float(titular.get("edad_jubilacion")) - edad(titular.get("fecha_nacimiento"))
+        anhos_aporte = 0.00
+        
+        if titular.get("situacion_laboral") != "Jubilado":
+            anhos_aporte = to_float(titular.get("edad_jubilacion")) - edad(titular.get("fecha_nacimiento"))
+        else:
+            anhos_aporte = 0.00
+
         pensiones = (
             to_float(data.get("pensiones", {}).get("valor_fondo")) * ((1 + tasa) ** anhos_aporte)
         ) + (
@@ -190,7 +207,8 @@ def guardar_datos():
 
         ingreso_futuros = (
             to_float(patrimonio.get("sueldo_titular")) +
-            to_float(patrimonio.get("utilidades_bonos"))
+            to_float(patrimonio.get("utilidades_bonos")) +
+            ingresos_conyuge
         )
 
         gasto_total = (
@@ -205,37 +223,88 @@ def guardar_datos():
             to_float(gastos.get("cambios"))
         )
 
-        ahorro_neto = ingreso_futuros - gasto_total
+        ingresos_adicionales = (
+            to_float(patrimonio.get("dividendos")) +
+            to_float(patrimonio.get("otros_ingresos")) +
+            to_float(patrimonio.get("ahorro_familiar"))
+        
+        )
+        
+        #Gastos
+        
+        deudas = sum(to_float(credito.get("saldo_actual")) for credito in lista_creditos)
+        
+        gastos_basicos = (
+            to_float(gastos.get("alquiler")) +
+            to_float(gastos.get("alimentacion")) +
+            to_float(gastos.get("servicios")) +
+            to_float(gastos.get("transporte")) + 
+            to_float(gastos.get("seguro") )
+        )
+
+        gasto_seguro_vida = (
+            to_float(seguro_vida.get("pago"))
+        )
+
+        gastos_estilo_vida = (
+            to_float(gastos.get("estilos"))
+        )
+
+        gastos_viajes = (
+            to_float(gastos.get("viajes"))
+        )
+
+        gastos_educacion_hijos = (
+            educacion_hijos
+        )
+
+        gastos_extraordinarios = (
+            to_float(gastos.get("otros"))
+        )
+
+        #ahorro_neto = ingreso_futuros - gasto_total
 
         # ===== Crear respuesta simulada =====
         respuesta = {
-            "ingresos_totales": round(ingreso_futuros, 2),
-            "gastos_totales": round(gasto_total, 2),
-            "ahorro_neto": round(ahorro_neto, 2),
+
+            #ingresos
+           
             "activos_liquidos": round(activos_liquidos, 2),
-            "activos_no_liquidos": round(activos_no_liquidos, 2),
-            "pensiones": round(pensiones, 2),
-            
+            "ahorros": round(ahorros, 2),
             "inversiones_on": round(inversiones_on, 2),
             "inversiones_off": round(inversiones_off, 2),
-            "dist_fija": round(inversiones_fija, 2),
-            "dist_variable": round(inversiones_variable, 2),
-            "dist_alternativos": round(inversiones_alternativos, 2),
-            "dist_cash": round(inversiones_cash, 2),
 
-            "graficos_html": f"""
-                <div style='margin-top:20px'>
-                    <h4>Visualización rápida:</h4>
-                    <p>Ingresos: S/. {round(ingreso_futuros,2)}</p>
-                    <p>Gastos: S/. {round(gasto_total,2)}</p>
-                    <p>Ahorro Neto: S/. {round(ahorro_neto,2)}</p>
-                    <p>Activos Líquidos: S/. {round(activos_liquidos,2)}</p>
-                    <p>Activos No Líquidos: S/. {round(activos_no_liquidos,2)}</p>
-                    <p>AFP + Futuros aportes: S/. {round(pensiones,2)}</p>
-                </div>
-            """
+
+            "activos_no_liquidos": round(activos_no_liquidos, 2),
+            "propiedades_on": round(propiedades_on, 2),
+            "propiedades_off": round(propiedades_off, 2),
+            "otros" : round(otras_propiedades_valor, 2),
+            "participaciones": round(participaciones, 2),
+
+            "pensiones": round(pensiones, 2),
+
+
+            "ingresos_futuros": round(ingreso_futuros, 2),
+            "sueldo_titular": round(to_float(patrimonio.get("sueldo_titular")), 2),
+            "utilidades_bonos": round(to_float(patrimonio.get("utilidades_bonos")), 2),
+            "ingresos_conyuge": round(ingresos_conyuge, 2),
+
+            "ingresos_adicionales": round(ingresos_adicionales, 2),
+
+            #gastos
+
+            "deudas": round(deudas, 2),
+            "gastos_basicos": round(gastos_basicos, 2),
+            "gasto_seguro_vida": round(gasto_seguro_vida, 2),
+            "gastos_estilo_vida": round(gastos_estilo_vida, 2),
+            "gastos_viajes": round(gastos_viajes, 2),
+            "gastos_educacion_hijos": round(gastos_educacion_hijos, 2),
+            "gastos_extraordinarios": round(gastos_extraordinarios, 2),
+
         }
-        print("✅ Cálculos realizados:", respuesta)
+
+        
+        #print("✅ Cálculos realizados:", respuesta)
 
         return jsonify(respuesta)
 

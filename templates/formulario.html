@@ -251,10 +251,10 @@
                 </select>
 
                 <div id ="activo_section" class="hidden box-variables">
-                    <label for="sueldo_titular">Sueldo del titular (anual y en US$.)</label>
+                    <label for="sueldo_titular">Sueldo/Ingresos del titular (anual y en US$)</label>
                     <input type="number" id="sueldo_titular" name="sueldo_titular" required>
 
-                    <label for="utilidades_titular">Utilidades y bono del titular (anual y en US$)</label>
+                    <label for="utilidades_titular">Utilidades y bonos del titular (anual y en US$)</label>
                     <input type="number" id="utilidades_titular" name="utilidades_titular">
 
                     <div class="hidden">
@@ -283,7 +283,7 @@
                         <option value="no">No</option>
                     </select>
 
-                    <label for="ingreso_pension">Pensión promedio mensual (S/.)</label>
+                    <label for="ingreso_pension">Pensión promedio (anual y en US$)</label>
                     <input type="number" id="ingreso_pension" name="ingreso_pension">
                 
                 </div>
@@ -305,7 +305,7 @@
                         <option value="Otros">Otros</option>
                     </select>
                     
-                    <label for="valor_fondo">Valor de fondo de pensión actual (S/.)</label>
+                    <label for="valor_fondo">Valor de fondo de pensión actual (US$)</label>
                     <input type="number" id="valor_fondo" name="valor_fondo">
                 
                 </div>
@@ -327,16 +327,13 @@
                     </select>
 
                     <div id ="activo_section_conyugue" class="hidden box-variables">
-                        <label for="sueldo_titular_conyugue">Sueldo del cónyugue (mensual y en S/.)</label>
+                        <label for="sueldo_titular_conyugue">Sueldo/Ingresos del cónyugue (anual y en US$)</label>
                         <input type="number" id="sueldo_titular_conyugue" name="sueldo_titular_conyugue" required>
 
-                        <label for="utilidades_titular_conyugue">Utilidades y bono del cónyugue (anual y en US$)</label>
+                        <label for="utilidades_titular_conyugue">Utilidades y bonos del cónyugue (anual y en US$)</label>
                         <input type="number" id="utilidades_titular_conyugue" name="utilidades_titular_conyugue">
 
-                        <label for="ingreso_promedio_conyugue">Ingreso promedio del cónyugue (mensual y en US$)</label>
-                        <input type="number" id="ingreso_promedio_conyugue" name="ingreso_promedio_conyugue">
-
-                        <label for="edad_jubilacion_conyugue">Edad exacta o estimada del cónyugue</label>
+                        <label for="edad_jubilacion_conyugue">Edad exacta o estimada de jubilación del cónyugue</label>
                         <input 
                             type="number" 
                             id="edad_jubilacion_conyugue" 
@@ -357,10 +354,10 @@
                             <option value="no">No</option>
                         </select>
 
-                        <label for="ingreso_pension_conyugue">Pensión promedio mensual del cónyugue (S/.)</label>
+                        <label for="ingreso_pension_conyugue">Pensión promedio del cónyugue (anual y en US$)</label>
                         <input type="number" id="ingreso_pension_conyugue" name="ingreso_pension_conyugue">
                                         
-                        <label for="valor_fondo_conyugue">Valor de fondo de pensión actual del cónyugue (S/.)</label>
+                        <label for="valor_fondo_conyugue">Valor de fondo de pensión actual del cónyugue (US$)</label>
                         <input type="number" id="valor_fondo_conyugue" name="valor_fondo_conyugue">
 
                     </div>
@@ -412,6 +409,9 @@
                     <div class="child-card">
                         <label for="tipo_seguro">Tipo de seguro:</label>
                         <input type="text" id="tipo_seguro" name="tipo_seguro">
+
+                        <label for="pago_seguro">Pago anual del seguro (US$):</label>
+                        <input type="number" id="pago_seguro" name="pago_seguro">
 
                         <label for="monto_seguro">Monto asegurado (US$):</label>
                         <input type="number" id="monto_seguro" name="monto_seguro">
@@ -550,6 +550,7 @@
             } else {
                 seguroVidaSection.classList.add('hidden');
                 document.getElementById('tipo_seguro').value = '';
+                document.getElementById('pago_seguro').value = '';
                 document.getElementById('monto_seguro').value = '';
                 document.getElementById('monto_retorno').value = '';
                 document.getElementById('anhios_retiro').value = '';
@@ -582,7 +583,6 @@
                 document.getElementById('situacion_laboral_conyugue').value = '';
                 document.getElementById('sueldo_titular_conyugue').value = '';
                 document.getElementById('utilidades_titular_conyugue').value = '';
-                document.getElementById('ingreso_promedio_conyugue').value = '';
                 document.getElementById('edad_jubilacion_conyugue').value = '';
                 document.getElementById('recibe_pension_conyugue').value = '';
                 document.getElementById('ingreso_pension_conyugue').value = '';
@@ -984,7 +984,7 @@
                     <option>Otros</option>
                 </select>
 
-                <label>Costo anual de educación (S/):</label>
+                <label>Costo de educación (Anual US$):</label>
                 <input type="number" name="hijo_costo_${contadorHijos}" min="0" required>
 
                 <div class="universidad-extra" style="display: none; margin-top: 10px;">
@@ -996,7 +996,7 @@
                     </select>
 
                     <div class="costo-universidad" style="display: none; margin-top: 10px;">
-                        <label>Costo anualizado de la universidad (S/):</label>
+                        <label>Costo anualizado de la universidad (Anual US$):</label>
                         <input type="number" name="hijo_anualizado_${contadorHijos}" min="0">
                     </div>
                 </div>
@@ -1153,7 +1153,8 @@
                 edad_jubilacion: document.getElementById("edad_jubilacion").value,
                 codigo: document.getElementById("codigo").value,
                 hub: document.getElementById("hub").value,
-                objetivos_personales: document.getElementById("objetivos").value
+                objetivos_personales: document.getElementById("objetivos").value,
+                situacion_laboral: document.getElementById("situacion_laboral_titular").value,
             };
 
             // ===== Cónyuge (si aplica) =====
@@ -1165,7 +1166,6 @@
                     situacion_laboral: document.getElementById("situacion_laboral_conyugue").value,
                     sueldo: document.getElementById("sueldo_titular_conyugue").value,
                     utilidades: document.getElementById("utilidades_titular_conyugue").value,
-                    ingreso_promedio: document.getElementById("ingreso_promedio_conyugue").value,
                     edad_jubilacion: document.getElementById("edad_jubilacion_conyugue").value,
                     recibe_pension: document.getElementById("recibe_pension_conyugue").value,
                     ingreso_pension: document.getElementById("ingreso_pension_conyugue").value,
@@ -1233,15 +1233,15 @@
 
             // ===== Gastos =====
             const gastos = {
-                alquiler: document.getElementById("alquiler").value,
-                alimentacion: document.getElementById("alimentacion").value,
-                servicios: document.getElementById("servicios").value,
-                sueldo_personal: document.getElementById("sueldo").value,
-                transporte: document.getElementById("transporte").value,
-                otros: document.getElementById("otros").value,
-                estilos: document.getElementById("estilos").value,
+                alquiler: document.getElementById("alquiler").value * 12,
+                alimentacion: document.getElementById("alimentacion").value * 12,
+                servicios: document.getElementById("servicios").value * 12,
+                sueldo_personal: document.getElementById("sueldo").value * 12,
+                transporte: document.getElementById("transporte").value * 12,
+                otros: document.getElementById("otros").value * 12,
+                estilos: document.getElementById("estilos").value * 12,
                 viajes: document.getElementById("viajes").value,
-                seguro: document.getElementById("seguro").value,
+                seguro: document.getElementById("seguro").value * 12,
                 cambios: document.getElementById("cambios").value
             };
 
@@ -1251,7 +1251,8 @@
                 sueldo_titular: document.getElementById("sueldo_titular").value,
                 ingreso_promedio: document.getElementById("ingreso_promedio").value,
                 alquileres: document.getElementById("alquileres").value,
-                dividendos: document.getElementById("otros_ingresos").value,
+                dividendos: document.getElementById("dividendos").value,
+                otros_ingresos: document.getElementById("otros_ingresos").value,
                 ahorro_familiar: document.getElementById("ahorro_familiar").value,
                 utilidades_bonos: document.getElementById("utilidades_titular").value
             };
@@ -1260,6 +1261,7 @@
             const seguro_vida = (document.getElementById("seguro_vida").value === "si")
                 ? {
                     tipo: document.getElementById("tipo_seguro").value,
+                    pago: document.getElementById("pago_seguro").value,
                     monto: document.getElementById("monto_seguro").value,
                     retorno: document.getElementById("monto_retorno").value,
                     anhos_retiro: document.getElementById("anhios_retiro").value
@@ -1314,7 +1316,6 @@
                 console.log("Guardado:", respuesta);
 
                 localStorage.setItem("resultados_financieros", JSON.stringify(respuesta));
-                localStorage.setItem("datos_originales", JSON.stringify(datos));
 
                 // Redirigir a página de resultados
                 window.location.href = "/resultados";

@@ -276,3 +276,223 @@ button:hover {
 .cash-tag {
     background-color: #f6ac23;
 }
+
+.contenedor-chart {
+    margin-bottom: 40px;
+    padding-left: 180px;
+    padding-right: 180px;
+}
+
+.contenedor-tablas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-top: 40px;
+    padding-left: 180px;  
+    padding-right: 180px;
+    margin-bottom: 50px;
+}
+
+.tabla-resumen {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    font-size: 14px;
+}
+
+.tabla-resumen th {
+    background: #e6e6e6;
+    text-align: left;
+    padding: 10px;
+    font-weight: 600;
+}
+
+.tabla-resumen td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.tabla-resumen td:last-child {
+    text-align: right;
+    font-weight: 600;
+}
+
+.print-only {
+    display: none;
+}
+/*
+.velocimetro_container {
+    width: 500px;
+    height: 500px;
+    border: 9px solid black;
+    border-radius: 50%;
+    margin: 50px auto;
+    position: relative;
+}
+
+.punto_central {
+    width: 20px;
+    height: 20px;
+    background-color: black;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}*/
+
+
+.velocimetro_container {
+    width: 500px;
+    height: 250px; /* altura real del semicirculo */
+    margin: 0 auto;
+    position: relative;
+    margin-top: 50px;
+}
+
+.semicirculo {
+    width: 100%;
+    height: 100%;
+    background: lightgray;
+    border-top-left-radius: 250px;
+    border-top-right-radius: 250px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.arco_fill {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    transform-origin: bottom center;
+
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+    transform: rotate(-90deg);
+    background: conic-gradient(
+        from 90deg at 50% 100%,
+        red 0deg 9deg,
+        orange 9deg 45deg,
+        green 45deg 117deg,
+        blue 117deg 180deg
+    );
+    /*transition: backgou;*/
+}
+
+
+.aguja {
+    width: 2.5px;
+    height: 240px;
+    background: black;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform-origin: bottom center;
+    transform: rotate(-90deg);
+    transition: transform 1s ease;
+}
+
+.punto_central {
+    width: 10px;
+    height: 10px;
+    background-color: black;
+    border-radius: 50%;
+    position: absolute;
+    bottom: -2.5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.semicirculo_container {
+    width: 400px;
+    height: 200px; /* altura real del semicirculo */
+    margin: 0 auto;
+    position: relative;
+    margin-top: -200px;
+}
+
+.punto_semicirculo {
+
+    width: 100%;
+    height: 100%;
+    background: #cecece;
+    border-top-left-radius: 200px;
+    border-top-right-radius: 200px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+@media print {
+
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .form-header {
+        background-color: #000 !important;
+        color: #fff !important;
+
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /*.form-header h1 {
+        color: #fff !important;
+    }*/
+
+    .contenedor-chart {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin: 0 auto 30px auto;
+        width: 90%;
+    }
+
+    canvas {
+        display: block;
+        margin: 0 auto !important;
+        max-width: 100% !important;
+    }
+
+    .contenedor-tablas {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        width: 90%;
+        margin: 20px auto;
+    }
+
+    .tabla-resumen,
+    .tabla-resumen th,
+    .tabla-resumen td {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .print-only {
+        display: block !important;
+        font-size: 11px;
+        color: #555;
+        margin-top: 30px;
+        text-align: center;
+    }
+    /*
+    .tabla-resumen th {
+        background-color: #e6e6e6 !important;
+        color: #000 !important;
+    }
+
+    .tabla-resumen tr:last-child td {
+        background-color: #f2f2f2 !important;
+        font-weight: 700;
+    }
+*/
+
+}
+

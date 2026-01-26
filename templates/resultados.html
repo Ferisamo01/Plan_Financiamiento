@@ -13,75 +13,317 @@
         <h1>Resultados de Plan Financiero</h1>
     </header>
 
-<div id="resumen" class="card"></div>
+<div class="contenedor-chart">
+    <h3 style="text-align:center; margin-bottom:18px;">Activos Familiares</h3>
+    <canvas id="chartActivos" height="60"></canvas>
+</div>
 
-<div class="card">
-    <h3>Gráfico Ingresos vs Gastos</h3>
-    <canvas id="chartBar"></canvas>
+<div class="contenedor-chart">
+    <h3 style="text-align:center; margin-bottom:18px;">Gastos Familiares</h3>
+    <canvas id="chartGastos" height="60"></canvas>
 </div>
 
 <div class="card">
+    <h3 style="text-align:center; margin-bottom:18px;">Resumen Ingresos / Gastos</h3>
+</div>
+
+<div class="contenedor-tablas">
+    <table class="tabla-resumen">
+        <thead>
+            <tr><th colspan="3">Activos / Recursos</th></tr>
+        </thead>
+        <tbody id="tablaIngresos"></tbody>
+    </table>
+
+    <table class="tabla-resumen">
+        <thead>
+            <tr><th colspan="3">Gastos / Pasivos</th></tr>
+        </thead>
+        <tbody id="tablaGastos"></tbody>
+    </table>
+</div>
+
+<h3 style="text-align:center; margin-bottom:18px;">Resumen Ingresos / Gastos</h3>
+
+
+<div class="velocimetro_container">
+    <div class="semicirculo">
+        <div class="arco_fill" id="arco_fill"></div>
+    </div>
+    <!--
+    <div class="semicirculo_container">
+        <div class="punto_semicirculo"></div>
+    </div>-->
+
+    <div class="aguja" id="aguja"></div>
+    <div class="punto_central"></div>
+    
+</div>
+
+<div class="disclaimer print-only">
+    Este reporte es referencial y no constituye una recomendación de inversión.
+</div>
+
+
+
+<!-- <div class="card">
     <h3>JSON Original</h3>
     <pre id="jsonOriginal" style="max-height:300px; overflow:auto; background:#f7f7f7; padding:10px"></pre>
-</div>
+</div> -->
 
 <script>
     // ================================
     // Cargar datos almacenados
     // ================================
     const resultados = JSON.parse(localStorage.getItem("resultados_financieros"));
-    const originales = JSON.parse(localStorage.getItem("datos_originales"));
+
+    if (!resultados) {
+        alert("No hay datos financieros cargados");
+        throw new Error("resultados_financieros vacío");
+    }
 
     // ================================
     // Mostrar resumen
     // ================================
-    document.getElementById("resumen").innerHTML = `
-        <h2>Resumen</h2>
-        <p><strong>Ingresos:</strong> S/. ${resultados.ingresos_totales}</p>
-        <p><strong>Gastos:</strong> S/. ${resultados.gastos_totales}</p>
-        <p><strong>Ahorro Neto:</strong> S/. ${resultados.ahorro_neto}</p>
-        <p><strong>Activos Liquidos:</strong> S/. ${resultados.activos_liquidos}</p>
-        <p><strong>Activos No Liquidos:</strong> S/. ${resultados.activos_no_liquidos}</p>
-        <p><strong>AFP + Aportes Futuros</strong> S/. ${resultados.pensiones}</p>
+    //document.getElementById("resumen").innerHTML = `
+      //  <h2>Resumen</h2>
 
+        //<p><strong>Activos Liquidos:</strong> $ ${resultados.activos_liquidos}</p>
+        //<p><strong>Activos No Liquidos:</strong> $ ${resultados.activos_no_liquidos}</p>
+        //<p><strong>Pensiones</strong> $ ${resultados.pensiones}</p>
+        //<p><strong>Ingresos Futuros</strong> $ ${resultados.ingresos_futuros}</p>
+        //<p><strong>Ingresos Adicionales</strong> $ ${resultados.ingresos_adicionales}</p>
 
-        <p><strong>Inversiones On</Strong> S/. ${resultados.inversiones_on}</p>
-        <p><strong>Inversiones Off</strong> S/. ${resultados.inversiones_off}</p>
-        
-        <p><strong>Fija</strong> S/. ${resultados.dist_fija}</p>
-        <p><strong>Variable</strong> S/. ${resultados.dist_variable}</p>
-        <p><strong>alternativo</strong> S/. ${resultados.dist_alternativos}</p>
-        <p><strong>Cash</strong> S/. ${resultados.dist_cash}</p>
+    //`;
 
-    `;
+    const dataValoresIngreso = [
+        resultados.activos_liquidos,
+        resultados.activos_no_liquidos,
+        resultados.pensiones,
+        resultados.ingresos_futuros,
+        resultados.ingresos_adicionales
+    ];
+
+    const dataValoresGastos = [
+        resultados.deudas,
+        resultados.gastos_basicos,
+        resultados.gastos_estilo_vida,
+        resultados.gastos_viajes,
+        resultados.gastos_educacion_hijos,
+        resultados.gastos_extraordinarios
+    ];
+
+    const totalIngreso = dataValoresIngreso.reduce((a, b) => a + b, 0);
+    const dataPorcentajeIngreso = dataValoresIngreso.map(v => (v / totalIngreso) * 100);
+
+    const totalGastos = dataValoresGastos.reduce((a, b) => a + b, 0);
+    const dataPorcentajeGastos = dataValoresGastos.map(v => (v / totalGastos) * 100);
 
     // ================================
-    // Gráfico
+    // FUNCION CREAR BARRAS APILIDAS
     // ================================
-    const ctx = document.getElementById('chartBar').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Ingresos', 'Gastos', 'Ahorro Neto'],
-            datasets: [{
-                data: [
-                    resultados.ingresos_totales,
-                    resultados.gastos_totales,
-                    resultados.ahorro_neto,
-                    resultados.activos_liquidos,
-                    resultados.activos_no_liquidos,
-                    resultados.pensiones
-                ],
-            }]
-        },
-        options: { responsive: true }
+    function crearGraficoBarraApilada({
+        canvasId,
+        labels,
+        dataPorcentajes,
+        valoresReales,
+        colores
+    }) {
+        const ctx = document.getElementById(canvasId);
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [''],
+                datasets: labels.map((label, i) => ({
+                    label,
+                    data: [dataPorcentajes[i]],
+                    valorReal: valoresReales[i], 
+                    backgroundColor: colores[i],
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.6
+                }))
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                animation: false,
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 10
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            boxHeight: 12
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => {
+                                const porcentaje = ctx.parsed.x.toFixed(1);
+                                const valorReal = ctx.dataset.valorReal;
+                                return [
+                                    `${ctx.dataset.label}`,
+                                    `${porcentaje}% (US$ ${valorReal.toLocaleString()})`
+                                ];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            stepSize: 10,
+                            callback: v => v + '%'
+                        },
+                        grid: { color: '#eee' }
+                    },
+                    y: {
+                        stacked: true,
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
+    //FUNCION DE CREAR TABLAS
+    function renderTabla(tbodyId, filas) {
+        const tbody = document.getElementById(tbodyId);
+        const total = filas.reduce((sum, f) => sum + f.valor, 0);
+
+        tbody.innerHTML = '';
+
+        filas.forEach(fila => {
+            const porcentaje = total ? (fila.valor / total) * 100 : 0;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${fila.label}</td>
+                <td>${fila.valor.toLocaleString()}</td>
+                <td>${porcentaje.toFixed(0)}%</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Fila TOTAL
+        const trTotal = document.createElement('tr');
+        trTotal.innerHTML = `
+            <td><strong>Total</strong></td>
+            <td><strong>${total.toLocaleString()}</strong></td>
+            <td><strong>100%</strong></td>
+        `;
+        trTotal.style.background = '#f2f2f2';
+        tbody.appendChild(trTotal);
+    }
+
+    function actualizarVelocimetro(porcentaje) {
+        porcentaje = Math.max(0, Math.min(100, porcentaje));
+
+        // Aguja
+        const grados = -90 + (porcentaje * 180 / 100);
+        document.getElementById('aguja').style.transform = `rotate(${grados}deg)`;
+
+        // Convertimos % a grados (0–180)
+
+        const p  = porcentaje * 1.8;
+        const r1 = 5  * 1.8;
+        const r2 = 25 * 1.8;
+        const r3 = 65 * 1.8;
+
+        let gradient = [];
+
+        if (p > 0)
+            gradient.push(`red 0deg ${Math.min(p, r1)}deg`);
+
+        if (p > r1)
+            gradient.push(`orange ${r1}deg ${Math.min(p, r2)}deg`);
+
+        if (p > r2)
+            gradient.push(`green ${r2}deg ${Math.min(p, r3)}deg`);
+        console.log("hola")
+        if (p > r3)
+            gradient.push(`blue ${r3}deg ${p}deg`);
+            console.log(r3, p)
+
+        // Resto gris
+        gradient.push(`#ccc ${p}deg 180deg`);
+
+        document.getElementById('arco_fill').style.background =
+            `conic-gradient(${gradient.join(',')})`;
+    }
+
+
+    crearGraficoBarraApilada({
+        canvasId: 'chartActivos',
+        labels: [
+            'Activos Líquidos',
+            'Activos No Líquidos',
+            'Pensiones',
+            'Ingresos Futuros',
+            'Ingresos Adicionales'
+        ],
+        dataPorcentajes: dataPorcentajeIngreso,
+        valoresReales: dataValoresIngreso,
+        colores: ['#5B84C4', '#9DBE5C', '#2E6F7E', '#77C2D3', '#A6DCE7']
     });
+
+    crearGraficoBarraApilada({
+        canvasId: 'chartGastos',
+        labels: [
+            'Deudas',
+            'Gastos Básicos',
+            'Estilo de Vida',
+            'Viajes',
+            'Educación Hijos',
+            'Gastos Extraordinarios'
+        ],
+        dataPorcentajes: dataPorcentajeGastos,
+        valoresReales: dataValoresGastos,
+        colores: ['#C45B5B', '#E39A5F', '#B88EDC', '#5FA8D3', '#7FC97F', '#D9D9D9'] //COLORES
+    });
+
 
     // ================================
     // Mostrar JSON original
     // ================================
-    document.getElementById("jsonOriginal").textContent =
-        JSON.stringify(originales, null, 2);
+    //document.getElementById("jsonOriginal").textContent =
+      //  JSON.stringify(resultados, null, 2);
+
+    //TABLAS RESUMEN//
+
+    //VARIABLES DE TABLAS INGRESO/GASTOS ABELITO
+    const filasIngresos = [
+        { label: 'Activos Líquidos', valor: resultados.activos_liquidos },
+        { label: 'Activos No Líquidos', valor: resultados.activos_no_liquidos },
+        { label: 'Pensiones', valor: resultados.pensiones },
+        { label: 'Ingresos Futuros', valor: resultados.ingresos_futuros },
+        { label: 'Ingresos Adicionales', valor: resultados.ingresos_adicionales }
+    ];
+
+    const filasGastos = [
+        { label: 'Deudas', valor: resultados.deudas },
+        { label: 'Gastos Básicos', valor: resultados.gastos_basicos },
+        { label: 'Estilo de Vida', valor: resultados.gastos_estilo_vida },
+        { label: 'Viajes', valor: resultados.gastos_viajes },
+        { label: 'Educación Hijos', valor: resultados.gastos_educacion_hijos },
+        { label: 'Gastos Extraordinarios', valor: resultados.gastos_extraordinarios }
+    ];
+
+    renderTabla('tablaIngresos', filasIngresos);
+    renderTabla('tablaGastos', filasGastos);
+    actualizarVelocimetro(70);
+
+
+
 </script>
 
 </body>
