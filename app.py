@@ -64,6 +64,11 @@ def formulario():
 def resultados():
     return render_template('resultados.html')
 
+@app.route("/resultados_2")
+def resultados_2():
+    return render_template("resultados_2.html")
+
+
 # ==============================
 # Ruta que recibe el JSON del front
 # ==============================
@@ -114,13 +119,9 @@ def guardar_datos():
         #ingresos_extraordinarios = data.get("ingresos_extraordinarios", {})
         #herencias = data.get("herencias", {})
         
-
-        
-
-        # Convertir valores a float (si vienen vacíos o texto, usar 0)
-
-            
-        educacion_hijos = sum(to_float(hijo.get("costo_total")) for hijo in lista_hijos)
+        print("Control hijos: ", lista_hijos)
+        educacion_hijos = sum(to_float(hijo.get("costo_anual")) for hijo in lista_hijos)
+        print(educacion_hijos)
 
 
         ahorros = to_float(patrimonio.get("ahorros_corrientes"))
@@ -162,8 +163,6 @@ def guardar_datos():
         )
 
 
-
-        #Propiedades
         propiedades_on = sum(
             to_float(prop.get("valor"))
             for prop in lista_propiedades
@@ -204,6 +203,10 @@ def guardar_datos():
             to_float(patrimonio.get("sueldo_titular", 0)) * 0.10 * (((1 + tasa) ** anhos_aporte - 1) / tasa)
         )
 
+        print("CONTROL: ", data.get("pensiones", {}).get("es_aportante"))
+        if data.get("pensiones", {}).get("es_aportante") == "no":
+            pensiones = float(0)
+
 
         ingreso_futuros = (
             to_float(patrimonio.get("sueldo_titular")) +
@@ -230,7 +233,6 @@ def guardar_datos():
         
         )
         
-        #Gastos
         
         deudas = sum(to_float(credito.get("saldo_actual")) for credito in lista_creditos)
         
@@ -300,6 +302,8 @@ def guardar_datos():
             "gastos_viajes": round(gastos_viajes, 2),
             "gastos_educacion_hijos": round(gastos_educacion_hijos, 2),
             "gastos_extraordinarios": round(gastos_extraordinarios, 2),
+            
+            "hijos": lista_hijos,
 
         }
 

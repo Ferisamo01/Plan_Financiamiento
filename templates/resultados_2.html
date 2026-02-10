@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Plan Educativo</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/form.css') }}">
+</head>
+
+<body>
+
+<header class="form-header">
+    <img src="{{ url_for('static', filename='img/zest_logo.png') }}"
+         alt="Zest Logo"
+         class="logo">
+
+    <h1>Resultados de Plan Financiero</h1>
+</header>
+
+
+<!-- ========================= -->
+<!-- CONTENIDO PAGINA 2 -->
+<!-- ========================= -->
+
+<div class="contendor_educacion">
+    <h3 style="text-align:center; margin-bottom:18px;">
+        Plan Educativo
+    </h3>
+
+    <div class="contenedor-tablas-una">
+        <div id="tablaEducacion"></div>
+        
+        <div id="disclaimerEducacion" style="color: #666666; font-style: italic; margin-top: 15px; font-size: 14px;">
+            (*) Tomando una inflación anual de eduacion de 4%.<br>
+            (**) Considerar el caso de Colegio un precio 3 veces el del Kinder.<br>
+            (***) Considerar lapsos de estudio (colegio - 17 años, universidad - 23 años, instituto - 21 años, postgrado por 2 años).
+        </div>
+    </div>
+    
+    <canvas id="graficoEducacion" width="800" height="400"></canvas>
+        <div id="disclaimerEducacion" style="color: #666666; font-style: italic; margin-top: 15px; font-size: 14px;">
+            (*) Tomando una inflación anual de eduacion de 4%.<br>
+            (**) Considerar al ahorro promedio mensual un ajuste de 4% anual por inflación.
+        </div>
+    
+    <div id="ahorroMensualPromedio" 
+        style="text-align:center; font-weight:bold; font-size:18px; color:#000000; margin-top:30px; font-family:Arial, sans-serif;">
+        Ahorro mensual promedio: $ 0
+    </div>
+    
+    <!-- AQUÍ VAN LOS NUEVOS GRÁFICOS -->
+</div>
+
+<!-- ========================= -->
+<!-- BOTONES NAVEGACION -->
+<!-- ========================= -->
+
+<div class="buttons">
+    <button type="button" class="prev-btn" onclick="irAnterior()">
+        Anterior
+    </button>
+
+    <button type="button" class="next-btn" onclick="irSiguiente()">
+        Siguiente
+    </button>
+</div>
+
+
+<div class="disclaimer print-only">
+    Este reporte es referencial y no constituye una recomendación de inversión.
+</div>
+
+
+<script>
+
+    // ================================
+    // CARGAR DATOS
+    // ================================
+    let educacionPorAnio = []; // [{anio: 2026, total: 12345}, ...]
+    let ahorro_Base = 0
+
+    const resultados =
+        JSON.parse(localStorage.getItem("resultados_financieros"));
+
+    if (!resultados) {
+        alert("No hay datos cargados");
+    }
+
+    console.log(resultados);
+    console.log(resultados.hijos);
+
+    //Funcion de calculo de proyecciones
+    function generarTablaEducacion(resultados) {
+
+        const hijos = resultados.hijos;
+        const inflacion = 0.04;
+        const anioActual = new Date().getFullYear();
+
+        const hoy = new Date();
+        const anioHoy = hoy.getFullYear();
+
+        // ====== CALCULAR EDAD ======
+        function calcularEdad(fechaNacimiento) {
+            const fn = new Date(fechaNacimiento);
+            return anioHoy - fn.getFullYear();
+        }
+
+        function formatoMoneda(valor) {
+            return "$ " + Number(valor).toLocaleString("en-US", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+        }
+
+        // ====== CALCULAR AÑOS A PROYECTAR POR HIJO ======
+        function aniosRestantes(hijo) {
+
+            const edad = calcularEdad(hijo.fecha_nacimiento);
+            const edu = hijo.educacion;
+            const anualizaUni = hijo.anualizado_universidad === "si";
+
+            if (edu === "Otros") return 1;
+
+            if (edu === "Instituto") {
+                if (edad >= 21) return 1;
+                return 21 - edad;
+            }
+
+            if (edu === "Postgrado") {
+                return 2;
+            }
+
+            if (edu === "Universidad") {
+                if (edad >= 23) return 1;
+                return 23 - edad;
+            }
+
+            // ✅ AQUÍ ESTÁ EL CAMBIO IMPORTANTE
+            if (edu === "Colegio" || edu === "Kinder") {
+
+                // si anualiza universidad → proyectar hasta 23
+                if (anualizaUni) {
+                    if (edad >= 23) return 1;
+                    return 23 - edad;
+                }
+
+                // si no anualiza → solo hasta 18
+                return Math.max(0, 18 - edad);
+            }
+
+            return 1;
+        }
+        
+        function costoPorEtapa(hijo, i) {
+
+            const edadActual = calcularEdad(hijo.fecha_nacimiento);
+            const edadFutura = edadActual + i;
+
+            const anualizaUni = hijo.anualizado_universidad === "si";
+
+            let costo = 0;
+            let aniosInflacion = 0;
+
+            // ===== UNIVERSIDAD =====
+            if (
+                anualizaUni &&
+                edadFutura >= 18 &&
+                edadFutura <= 23 &&
+                hijo.costo_universidad
+            ) {
+
+                costo = Number(hijo.costo_universidad);
+
+                const aniosHastaUni = 18 - edadActual;
+                aniosInflacion = i - aniosHastaUni;
+
+                if (aniosInflacion < 0) aniosInflacion = 0;
+            }
+
+            // ===== KINDER =====
+            else if (hijo.educacion === "Kinder") {
+
+                if (edadFutura <= 6) {
+                    // sigue en kinder
+                    costo = Number(hijo.costo_anual);
+                    aniosInflacion = i;
+                } else if (edadFutura <= 17) {
+                    // colegio empieza a los 7
+                    costo = Number(hijo.costo_anual) * 3;
+
+                    const aniosHastaColegio = 7 - edadActual;
+                    aniosInflacion = i - aniosHastaColegio;
+
+                    if (aniosInflacion < 0) aniosInflacion = 0;
+                }
+            }
+
+            // ===== COLEGIO =====
+            else if (hijo.educacion === "Colegio") {
+
+                if (edadFutura <= 17) {
+                    costo = Number(hijo.costo_anual);
+                    aniosInflacion = i;
+                }
+            }
+
+            // ===== OTROS CASOS =====
+            else {
+                costo = Number(hijo.costo_anual);
+                aniosInflacion = i;
+            }
+
+            return costo * Math.pow(1 + inflacion, aniosInflacion);
+        }
+
+        // ====== CALCULAR COSTO BASE ======
+        function costoBase(hijo) {
+
+            let costo = Number(hijo.costo_anual);
+
+            // SOLO kinder multiplica x3
+            if (hijo.educacion === "Kinder") {
+                costo = costo * 3;
+            }
+
+            return costo;
+        }
+
+        // ====== DETERMINAR HORIZONTE MAXIMO ======
+        let maxAnios = 0;
+        hijos.forEach(h => {
+            maxAnios = Math.max(maxAnios, aniosRestantes(h));
+        });
+
+        // ====== CREAR TABLA ======
+        let html = `<table class="tabla-resumen tabla-educacion">`;
+
+
+        // HEADER
+        html += `<thead><tr>`;
+        html += `<th>Año</th>`;
+
+        hijos.forEach((_, i) => {
+            html += `<th>Hijo ${i + 1}</th>`;
+        });
+
+        html += `<th>Total Eduacion</th>`;
+        html += `</tr></thead>`;
+
+        // BODY
+        html += `<tbody>`;
+
+        for (let i = 0; i < maxAnios; i++) {
+
+            const anio = anioActual + i;
+            let sumaAnual = 0;
+
+            html += `<tr>`;
+            html += `<td style="text-align:center;">${anio}</td>`;
+
+
+            hijos.forEach(hijo => {
+
+                const aniosHijo = aniosRestantes(hijo);
+                let valor = 0;
+
+                if (i < aniosHijo) {
+
+                    //let base = costoBase(hijo);
+                    //let base = costoPorEtapa(hijo, i);
+                    valor = costoPorEtapa(hijo, i);
+
+
+                    //valor = base * Math.pow(1 + inflacion, i);
+                    sumaAnual += valor;
+                }
+                
+                html += `<td class="td-money">${valor ? formatoMoneda(valor) : ""}</td>`;
+
+            });
+            educacionPorAnio.push({ anio: anio, total: sumaAnual });
+            //html += `<td class="td-total">${formatoMoneda(sumaAnual)}</td>`;
+            html += `<td style="text-align:center;">$ ${sumaAnual.toFixed(0)}</td>`;
+
+            html += `</tr>`;
+        }
+
+        html += `</tbody></table>`;
+
+        return html;
+    }
+
+    //Funcion de grafico de barras
+    
+    console.log(educacionPorAnio)
+    function generarGraficoLineas() {
+        if (!educacionPorAnio || educacionPorAnio.length === 0) {
+            console.warn("No hay datos en educacionPorAnio. Primero ejecuta generarTablaEducacion()");
+            return;
+        }
+
+        const inflacion = 0.04; // 4%
+        const labels = educacionPorAnio.map(e => e.anio);
+        const totalData = educacionPorAnio.map(e => e.total);
+
+        // ====== CALCULAR AHORRO PROMEDIO ======
+        const totalSuma = totalData.reduce((a, b) => a + b, 0);
+        const maxAnios = totalData.length;
+        const ahorroData = [];
+        let base = totalSuma / maxAnios;
+
+        const ahorroBase = totalSuma * inflacion / (Math.pow(1 + inflacion, maxAnios) - 1);
+        //ahorro_Base.push(ahorroBase);
+        ahorro_Base = ahorroBase
+        console.log("Control:", totalSuma, ahorroBase)
+
+        /*for (let i = 0; i < maxAnios; i++) {
+            if (i === 0) ahorroData.push(base);
+            else ahorroData.push(ahorroData[i - 1] * (1 + inflacion));
+        }*/
+
+        for (let i = 0; i < maxAnios; i++) {
+            ahorroData.push(ahorroBase * Math.pow(1 + inflacion, i));
+        }
+        const sumaVerificacion = ahorroData.reduce((a,b)=>a+b,0);
+        console.log("Suma línea ahorro:", sumaVerificacion, "Suma total:", totalSuma);
+
+
+        // ====== INSERTAR CANVAS ======
+        const contenedor = document.querySelector('.contendor_educacion');
+        let canvas = document.getElementById('graficoEducacion');
+        if (!canvas) {
+            canvas = document.createElement('canvas');
+            canvas.id = 'graficoEducacion';
+            canvas.width = 800;
+            canvas.height = 400;
+            contenedor.appendChild(canvas);
+        }
+
+        const ctx = canvas.getContext('2d');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "Total Educación",
+                        data: totalData,
+                        borderColor: "black",
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.3
+                    },
+                    {
+                        label: "Ahorro Promedio",
+                        data: ahorroData,
+                        borderColor: "orange",
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        enabled: true,
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ": $ " + Number(context.raw).toLocaleString();
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Evolución de gastos en educación y ahorro promedio',
+                        color: '#000000',       // negro
+                        font: {
+                            size: 18,           // tamaño más grande, parecido a h3
+                            //weight: 'bold',     // negrita
+                            family: 'Arial, sans-serif' // opcional, misma familia que tu página
+                        },
+                        padding: {
+                            top: 10,
+                            bottom: 20
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false // Quitar líneas verticales
+                        },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: "#ffffff" // líneas horizontales blancas
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return '$ ' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // ================================
+    // NAVEGACION
+    // ================================
+    function irAnterior() {
+        window.location.href = "/resultados";
+    }
+
+    function irSiguiente() {
+        window.location.href = "/resultados_3";
+    }
+
+    document.getElementById("tablaEducacion").innerHTML =
+        generarTablaEducacion(resultados);
+        generarGraficoLineas();
+
+    console.log("global: ", ahorro_Base)
+    
+    const ahorroMensualPromedio = ahorro_Base / 12;
+
+    const labelAhorro = document.getElementById("ahorroMensualPromedio");
+    if(labelAhorro){
+        labelAhorro.innerText = "Ahorro mensual promedio: $ " + ahorroMensualPromedio.toFixed(0).toLocaleString();
+    }
+
+</script>
+
+</body>
+</html>

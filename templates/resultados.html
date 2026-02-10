@@ -43,12 +43,18 @@
     </table>
 </div>
 
-<h3 style="text-align:center; margin-bottom:18px;">Resumen Ingresos / Gastos</h3>
+<h3 style="text-align:center; margin-bottom:18px;">Porcentaje de cobertura</h3>
 
+<div class="resumen_cobertura">
+    <div id="label_porcentaje" class="label_porcentaje">0%</div>
+    <div id="label_estado" class="label_estado">Estado</div>
+    <div id="label_consejo" class="label_consejo">Mensaje</div>
+</div>
 
 <div class="velocimetro_container">
     <div class="semicirculo">
         <div class="arco_fill" id="arco_fill"></div>
+        <div class="tapa_interior"></div>
     </div>
     <!--
     <div class="semicirculo_container">
@@ -64,6 +70,15 @@
     Este reporte es referencial y no constituye una recomendación de inversión.
 </div>
 
+<div class="buttons">
+    <button type="button" class="prev-btn" onclick="irAnterior()">
+        Anterior
+    </button>
+
+    <button type="button" class="next-btn" onclick="irSiguiente()">
+        Siguiente
+    </button>
+</div>
 
 
 <!-- <div class="card">
@@ -118,6 +133,8 @@
 
     const totalGastos = dataValoresGastos.reduce((a, b) => a + b, 0);
     const dataPorcentajeGastos = dataValoresGastos.map(v => (v / totalGastos) * 100);
+
+    let valorvelocimetro = 0.00;
 
     // ================================
     // FUNCION CREAR BARRAS APILIDAS
@@ -226,6 +243,11 @@
     }
 
     function actualizarVelocimetro(porcentaje) {
+        
+        if (porcentaje >= 100) {
+            porcentaje = 100;
+        }
+        
         porcentaje = Math.max(0, Math.min(100, porcentaje));
 
         // Aguja
@@ -258,7 +280,57 @@
         gradient.push(`#ccc ${p}deg 180deg`);
 
         document.getElementById('arco_fill').style.background =
-            `conic-gradient(${gradient.join(',')})`;
+            `conic-gradient(from -90deg, ${gradient.join(',')})`;
+    }
+
+    function actualizarResumenCobertura(porcentaje) {
+
+
+        let estado = "";
+        let consejo = "";
+
+        if (porcentaje < 5) {
+            estado = "Crítico";
+            consejo = "La cobertura actual es insuficiente para sostener los gastos proyectados. Se recomienda priorizar reducción de pasivos y fortalecimiento del ahorro.";
+        }
+        else if (porcentaje < 25) {
+            estado = "Bajo";
+            consejo = "Existe cobertura parcial, pero aún vulnerable ante imprevistos. Se recomienda incrementar activos líquidos y revisar gastos no esenciales.";
+        }
+        else if (porcentaje < 65) {
+            estado = "Bueno";
+            consejo = "La cobertura es adecuada para el nivel actual de gastos. Se recomienda mantener disciplina financiera y continuar fortaleciendo el patrimonio.";
+        }
+        else  {
+            estado = "Excelente";
+            consejo = "La cobertura financiera es sólida. Se recomienda optimizar la estructura de inversiones para mejorar rentabilidad y sostenibilidad futura.";
+        }
+
+        if (porcentaje >= 100) {
+            document.getElementById("label_porcentaje").innerText =
+                `>100%`;
+        }
+
+        else {
+             document.getElementById("label_porcentaje").innerText =
+                `${porcentaje.toFixed(0)}%`;
+        }
+        
+
+
+        document.getElementById("label_estado").innerText =
+            estado;
+
+        document.getElementById("label_consejo").innerText =
+            consejo;
+    }
+
+    function irSiguiente() {
+        window.location.href = "/resultados_2";
+    }
+
+    function irAnterior() {
+        window.history.back();
     }
 
 
@@ -320,9 +392,14 @@
 
     renderTabla('tablaIngresos', filasIngresos);
     renderTabla('tablaGastos', filasGastos);
-    actualizarVelocimetro(70);
+    
+    valorvelocimetro = (totalIngreso - totalGastos) / totalGastos * 100;
+    console.log(valorvelocimetro)
+    //actualizarVelocimetro(75);
+    //actualizarResumenCobertura(75);
 
-
+    actualizarVelocimetro(valorvelocimetro);
+    actualizarResumenCobertura(valorvelocimetro);
 
 </script>
 
