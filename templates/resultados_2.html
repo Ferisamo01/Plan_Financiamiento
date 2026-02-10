@@ -236,7 +236,7 @@
         });
 
         // ====== CREAR TABLA ======
-        let html = `<table class="tabla-resumen tabla-educacion">`;
+        let html = `<table class="tabla-educacion">`;
 
 
         // HEADER
@@ -283,7 +283,7 @@
             });
             educacionPorAnio.push({ anio: anio, total: sumaAnual });
             //html += `<td class="td-total">${formatoMoneda(sumaAnual)}</td>`;
-            html += `<td style="text-align:center;">$ ${sumaAnual.toFixed(0)}</td>`;
+            html += `<td class="td-money">${formatoMoneda(sumaAnual)}</td>`;
 
             html += `</tr>`;
         }
@@ -294,8 +294,6 @@
     }
 
     //Funcion de grafico de barras
-    
-    console.log(educacionPorAnio)
     function generarGraficoLineas() {
         if (!educacionPorAnio || educacionPorAnio.length === 0) {
             console.warn("No hay datos en educacionPorAnio. Primero ejecuta generarTablaEducacion()");
@@ -313,21 +311,14 @@
         let base = totalSuma / maxAnios;
 
         const ahorroBase = totalSuma * inflacion / (Math.pow(1 + inflacion, maxAnios) - 1);
-        //ahorro_Base.push(ahorroBase);
-        ahorro_Base = ahorroBase
-        console.log("Control:", totalSuma, ahorroBase)
-
-        /*for (let i = 0; i < maxAnios; i++) {
-            if (i === 0) ahorroData.push(base);
-            else ahorroData.push(ahorroData[i - 1] * (1 + inflacion));
-        }*/
 
         for (let i = 0; i < maxAnios; i++) {
             ahorroData.push(ahorroBase * Math.pow(1 + inflacion, i));
         }
-        const sumaVerificacion = ahorroData.reduce((a,b)=>a+b,0);
-        console.log("Suma línea ahorro:", sumaVerificacion, "Suma total:", totalSuma);
 
+        ahorroData.reverse();
+        ahorro_Base = ahorroData[0];
+        const sumaVerificacion = ahorroData.reduce((a,b)=>a+b,0);
 
         // ====== INSERTAR CANVAS ======
         const contenedor = document.querySelector('.contendor_educacion');

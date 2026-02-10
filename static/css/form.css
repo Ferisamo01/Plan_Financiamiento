@@ -301,13 +301,45 @@ button:hover {
     margin-bottom: 40px;
 }
 
+.contendor_educacion {
+    width: 70%;
+    /*max-width: 1100px;*/
+    margin: 40px auto;
+}
+
+.tabla-educacion {
+    width: 100%;
+    table-layout: fixed;
+    text-align: center;
+}
+
 #tablaEducacion {
     width: 100%;
 }
 
 .tabla-educacion {
     width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    font-size: 14px;
     /*max-width: 1800px; /* controla el ancho visual */
+}
+
+.tabla-educacion th {
+    background: #e6e6e6;
+    text-align: center;
+    padding: 10px;
+    font-weight: 600;
+}
+
+.tabla-educacion td {
+    padding: 8px 25px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+}
+
+.tabla-educacion td:last-child {
+    font-weight: 600;
 }
 
 
@@ -318,46 +350,35 @@ button:hover {
     font-size: 14px;
 }
 
-.tabla-resumen th {
+.tabla-resumen th { 
+    width: auto;
     background: #e6e6e6;
-    text-align: left;
+    text-align: center;
     padding: 10px;
     font-weight: 600;
 }
 
 .tabla-resumen td {
-    padding: 8px 10px;
+    width: auto;
+    padding: 8px 25px;
     border-bottom: 1px solid #eee;
+    text-align: left;
 }
 
 .tabla-resumen td:last-child {
-    text-align: right;
+    text-align: center;
     font-weight: 600;
 }
+
+.tabla-resumen td:nth-last-child(2) {
+    text-align: right;
+}
+
+
 
 .print-only {
     display: none;
 }
-
-.tabla-educacion {
-    width: 100%;
-    table-layout: fixed;
-    text-align: center;
-}
-
-.tabla-resumen th,
-.tabla-resumen td {
-    width: auto;
-    text-align: center;
-}
-
-
-.contendor_educacion {
-    width: 70%;
-    /*max-width: 1100px;*/
-    margin: 40px auto;
-}
-
 
 .velocimetro_container {
     width: 500px;

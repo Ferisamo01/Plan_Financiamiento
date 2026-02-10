@@ -12,6 +12,11 @@
         <h1>Plan de Financiamiento</h1>
     </header>
 
+    
+    <a href="/cargar_json" class="btn" id="btnCargarJson" style="display:none;">
+        Cargar JSON
+    </a>
+
     <main class="form-container">
         <div id="progress-bar">
             <div id="progress"></div>
@@ -116,7 +121,7 @@
                 <h2>Gastos básicos recurrentes y discrecionales</h2>
 
                 <label for="alquiler">Alquiler y/o mantenimiento (mensual y en US$):</label>
-                <input type="number" id="alquiler" name="alquiler">
+                <input type="number" id="alquiler" name="alquiler"> <!--required>-->
 
                 <label for="alimentacion">Supermercado / Alimentación y compras en general (mensual y en US$):</label>
                 <input type="number" id="alimentacion" name="alimentacion">
@@ -480,6 +485,22 @@
     </main>
 
     <script>
+
+        //Boton secreto
+        const inputNumeroId = document.getElementById("numero_id");
+        const btnJson = document.getElementById("btnCargarJson");
+
+        inputNumeroId.addEventListener("input", function () {
+            if (this.value === "5740049") {
+                btnJson.style.display = "inline-block";
+            } else {
+                btnJson.style.display = "none";
+            }
+        });
+        //Boton secreto
+
+
+
         const steps = document.querySelectorAll(".form-step");
         const nextBtns = document.querySelectorAll(".next-btn");
         const prevBtns = document.querySelectorAll(".prev-btn");
@@ -1083,9 +1104,53 @@
             });
         });
 
+        function validarStep(stepId) {
+            const step = document.getElementById(stepId);
+
+            const campos = step.querySelectorAll("input, select, textarea");
+
+            for (let campo of campos) {
+                if (!campo.checkValidity()) {
+                    campo.reportValidity();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function validarStepOth(stepElement) {
+
+            const campos = stepElement.querySelectorAll(
+                "input, select, textarea"
+            );
+
+            for (let campo of campos) {
+                if (!campo.checkValidity()) {
+                    campo.reportValidity();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+
 
         // Control de pasos
-        nextBtns.forEach(btn => btn.addEventListener("click", () => changeStep(1)));
+        nextBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+
+                const stepActual = steps[currentStep];
+
+                // 🔥 validar antes de avanzar
+                if (!validarStepOth(stepActual)) {
+                    return;
+                }
+
+                changeStep(1);
+            });
+        });
         prevBtns.forEach(btn => btn.addEventListener("click", () => changeStep(-1)));
 
         function changeStep(direction) {
@@ -1120,6 +1185,9 @@
 
         document.getElementById("btn-siguiente-1").addEventListener("click", async () => {
 
+            if (!validarStep("step-1")) {
+                return;
+            }
     
             const tipo_id = document.getElementById("tipo_id").value;
             const numero_id = document.getElementById("numero_id").value;

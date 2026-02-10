@@ -68,6 +68,14 @@ def resultados():
 def resultados_2():
     return render_template("resultados_2.html")
 
+@app.route("/resultados_3")
+def resultados_3():
+    return render_template("resultados_3.html")
+
+@app.route('/cargar_json')
+def cargar_json():
+    return render_template('cargar_json.html')
+
 
 # ==============================
 # Ruta que recibe el JSON del front
