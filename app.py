@@ -312,6 +312,7 @@ def guardar_datos():
             "gastos_extraordinarios": round(gastos_extraordinarios, 2),
             
             "hijos": lista_hijos,
+            "inversiones": lista_inversiones,
 
         }
 

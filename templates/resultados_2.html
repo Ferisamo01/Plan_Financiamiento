@@ -31,12 +31,14 @@
     </h3>
 
     <div class="contenedor-tablas-una">
-        <div id="tablaEducacion"></div>
+        <div id="tablaEducacion">
         
-        <div id="disclaimerEducacion" style="color: #666666; font-style: italic; margin-top: 15px; font-size: 14px;">
-            (*) Tomando una inflación anual de eduacion de 4%.<br>
-            (**) Considerar el caso de Colegio un precio 3 veces el del Kinder.<br>
-            (***) Considerar lapsos de estudio (colegio - 17 años, universidad - 23 años, instituto - 21 años, postgrado por 2 años).
+            <div id="disclaimerEducacion" style="color: #666666; font-style: italic; margin-top: 15px; font-size: 14px;">
+                (*) Tomando una inflación anual de eduacion de 4%.<br>
+                (**) Considerar el caso de Colegio un precio 3 veces el del Kinder.<br>
+                (***) Considerar lapsos de estudio (colegio - 17 años, universidad - 23 años, instituto - 21 años, postgrado por 2 años).
+            </div>
+
         </div>
     </div>
     
@@ -89,8 +91,6 @@
         alert("No hay datos cargados");
     }
 
-    console.log(resultados);
-    console.log(resultados.hijos);
 
     //Funcion de calculo de proyecciones
     function generarTablaEducacion(resultados) {

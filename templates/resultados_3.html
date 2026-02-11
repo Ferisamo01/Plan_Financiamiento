@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Plan Educativo</title>
+    <title>Propuesta de Inversión</title>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -22,11 +22,246 @@
 
 
 <!-- ========================= -->
-<!-- CONTENIDO PAGINA 2 -->
+<!-- CONTENIDO PAGINA 3 -->
 <!-- ========================= -->
+<h3 style="text-align:center; margin-bottom:18px; margin-top: 48px;">
+    Distribución de Inversiones Actual
+</h3>
 
-<div class="contendor_Propuesta_Inversion">
-    <h3 style="text-align:center; margin-bottom:18px;">
-        Propuesta de Inversion
-    </h3>
+<div class="contenedor-tortas-inversion">
+    
+    <div class="grafico-box">
+        <select id="selectorInversion">
+            <option value="consolidado">Consolidado</option>
+        </select>
+
+        <canvas id="graficoTorta" width="350" height="350"></canvas>
+
+    </div>
+
+    <div class="tabla-box">
+    
+        <h4 style="text-align:center; margin-bottom:18px;">
+            Perfil: <span id="perfilInversion">-</span>   
+        </h4>
+        <table class="tabla-resumen">
+            
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Monto</th>
+                    <th>Distribución (%)</th>
+                </tr>
+            </thead>
+            <tbody id="tablaInversionBody"></tbody>
+        </table>
+    </div>
+
 </div>
+
+
+<div class="buttons">
+    <button type="button" class="prev-btn" onclick="irAnterior()">
+        Anterior
+    </button>
+
+    <button type="button" class="next-btn" onclick="irSiguiente()">
+        Siguiente
+    </button>
+</div>
+
+<div class="disclaimer print-only">
+    Este reporte es referencial y no constituye una recomendación de inversión.
+</div>
+
+<script>
+
+    // ================================
+    // CARGAR DATOS
+    // ================================
+
+    let chartTorta;
+
+    const resultados =
+        JSON.parse(localStorage.getItem("resultados_financieros"));
+
+    if (!resultados) {
+        alert("No hay datos cargados");
+    }
+
+    //console.log(resultados);
+    console.log(resultados.inversiones);
+    console.log(resultados)
+
+    const select = document.getElementById("selectorInversion");
+    const tbody = document.getElementById("tablaInversionBody");
+
+
+    resultados.inversiones.forEach((inv, i) => {
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = "Inversión " + (i + 1);
+        select.appendChild(opt);
+    });
+
+
+    function procesarInversion(inv) {
+
+        const total = Number(inv.valor);
+
+        return [
+            {
+                label: "Renta fija",
+                valor: total * inv.dist_fija / 100
+            },
+            {
+                label: "Renta variable",
+                valor: total * inv.dist_variable / 100
+            },
+            {
+                label: "Alternativos",
+                valor: total * inv.dist_alternativos / 100
+            },
+            {
+                label: "Cash",
+                valor: total * inv.dist_cash / 100
+            }
+        ];
+    }
+
+    function consolidarInversiones(inversiones) {
+
+        let total = {
+            fija: 0,
+            variable: 0,
+            alternativos: 0,
+            cash: 0
+        };
+
+        inversiones.forEach(inv => {
+            const valor = Number(inv.valor);
+
+            total.fija += valor * inv.dist_fija / 100;
+            total.variable += valor * inv.dist_variable / 100;
+            total.alternativos += valor * inv.dist_alternativos / 100;
+            total.cash += valor * inv.dist_cash / 100;
+        });
+
+        return [
+            { label: "Renta fija", valor: total.fija },
+            { label: "Renta variable", valor: total.variable },
+            { label: "Alternativos", valor: total.alternativos },
+            { label: "Cash", valor: total.cash }
+        ];
+    }
+    function actualizarVista() {
+
+        let data;
+
+        if (select.value === "consolidado") {
+            data = consolidarInversiones(resultados.inversiones);
+        } else {
+            data = procesarInversion(resultados.inversiones[select.value]);
+        }
+
+        dibujarTabla(data);
+        dibujarTortaChartJS(data);
+    }
+
+    function formatoMoneda(valor) {
+        return "$ " + Number(valor).toLocaleString("en-US", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+    }
+
+    function dibujarTabla(data) {
+
+        const total = data.reduce((a,b)=>a+b.valor,0);
+
+        tbody.innerHTML = "";
+
+        data.forEach(item => {
+
+            const porcentaje = (item.valor / total) * 100;
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${item.label}</td>
+                    <td style="text-align:center";> ${formatoMoneda(item.valor)}</td>
+                    <td>${porcentaje.toFixed(0)}%</td>
+                </tr>
+            `;
+        });
+    }
+
+    function dibujarTortaChartJS(data) {
+        const ctx = document.getElementById('graficoTorta').getContext('2d');
+
+        const colores = ["#4CAF50","#2196F3","#FF9800","#9C27B0"];
+
+        const chartData = {
+            labels: data.map(d => d.label),
+            datasets: [{
+                data: data.map(d => d.valor),
+                backgroundColor: colores
+            }]
+        };
+
+        if (chartTorta) {
+            // si ya existe, actualizar datos
+            chartTorta.data = chartData;
+            chartTorta.update();
+        } else {
+            // crear gráfico por primera vez
+            chartTorta = new Chart(ctx, {
+                type: 'doughnut',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                boxWidth: 15,
+                                boxHeight: 15,
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const valor = context.raw;
+                                    const total = context.chart._metasets[context.datasetIndex].total;
+                                    const porcentaje = (valor / total * 100).toFixed(0);
+                                    return `${context.label}: $ ${valor.toLocaleString()} (${porcentaje}%)`;
+                                }
+                            }
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            top: 5,
+                            bottom: 5   // <- este es el espacio extra entre gráfico y leyenda
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+
+
+
+    
+    select.addEventListener("change", actualizarVista);
+    actualizarVista();
+
+
+</script>
+
+</body>
+</html>
