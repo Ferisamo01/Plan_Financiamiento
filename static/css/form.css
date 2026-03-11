@@ -22,6 +22,28 @@ body {
     transform-origin: center;
 }
 */
+
+.recomendacion-box{
+    margin: 30px auto;
+    max-width: 750px;
+    padding: 18px 24px;
+
+    background: #f8fafc;
+    border-left: 6px solid #4CAF50;
+
+    border-radius: 8px;
+    font-size: 15px;
+    line-height: 1.6;
+
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.recomendacion-box strong{
+    color:#1b5e20;
+}
+
+
+
 .form-header {
     background-color: black;
     color: white;
@@ -46,6 +68,16 @@ body {
     */
 }
 
+.img-portafolio{
+    width: 100%;
+    max-width: 500px;
+    margin: 10px auto;
+    display: block;
+    border-radius: 20px;
+
+    border: 3px solid black;
+}
+
 
 /* Contenedor principal */
 .form-container {
@@ -60,6 +92,8 @@ body {
 /* Pasos */
 .form-step {
     display: none;
+    flex-direction: column; /*esto acomodaste*/
+    gap: 28px;
 }
 
 .form-step.active {
@@ -70,6 +104,7 @@ body {
 label {
     display: block;
     margin-top: 15px;
+    margin-bottom: 5px;
     font-weight: 500;
 }
 

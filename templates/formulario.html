@@ -100,15 +100,75 @@
                 <h2>Perfil de Riesgo</h2> 
                 <p>Responda las siguientes preguntas para determinar su perfil de riesgo:</p>
 
+                <label for="pregunta1">¿En cuanto tiempo planeas usar el dinero que va a invertir?</label>
+                <select id="pregunta1" name="pregunta1" required>
+                    <option value="">Seleccione...</option>
+                    <option value="2">En 1 año o menos</option>
+                    <option value="4">En 1 a 3 años</option>
+                    <option value="6">En 3 a 5 años</option>
+                    <option value="8">En más de 5 años</option>
+                </select>
+
+                <label for="pregunta2">¿Qué porcentaje de tu patrimonio líquido total estás dispuesto(a) a invertir?</label>
+                <select id="pregunta2" name="pregunta2" required>
+                    <option value="">Seleccione...</option>
+                    <option value="2">Más del 50%</option>
+                    <option value="4">Entre 25% y 50%</option>
+                    <option value="6">Entre 10% y 25%</option>
+                    <option value="8">Menos del 10%</option>
+                </select>
+
+                <label for="pregunta3">¿Qué esperas lograr con tu inversión?</label>
+                <select id="pregunta3" name="pregunta3" required>
+                    <option value="">Seleccione...</option>
+                    <option value="2">Que mi dinero esté seguro, aunque gane lo mínimo</option>
+                    <option value="4">Que crezca un poco, aceptando un bajo riesgo</option>
+                    <option value="6">Que crezca más, asumiendo un riesgo moderado</option>
+                    <option value="8">Que crezca lo máximo posible, aceptando un alto riesgo</option>
+                </select>
+
+                <label for="pregunta4">¿Con cuál de los siguientes portafolios te sentirías más cómodo invirtiendo, sabiendo que cada uno representa una combinación distinta de riesgo y retorno anual potencial?</label>
+                
+                <img 
+                    src="{{ url_for('static', filename='img/portafolios.png') }}" 
+                    alt="Comparación de portafolios"
+                    class="img-portafolio">
+
+                <select id="pregunta4" name="pregunta4" required>
+                    <option value="">Seleccione...</option>
+                    <option value="2">Portafolio A</option>
+                    <option value="4">Portafolio B</option>
+                    <option value="6">Portafolio C</option>
+                    <option value="8">Portafolio D</option>
+                    <option value="10">Portafolio E</option>
+                </select>
+
+                <label for="pregunta5">¿Cuál consideras que es tu nivel de conocimiento/experiencia sobre inversiones?</label>
+                <select id="pregunta5" name="pregunta5" required>
+                    <option value="">Seleccione...</option>
+                    <option value="2">No tengo conocimiento ni experiencia previa</option>
+                    <option value="4">Tengo algo de conocimiento</option>
+                    <option value="6">Tengo conocimientos y/o experiencia en el mercado de renta variable y/o de renta fija</option>
+                    <option value="8">Tengo amplia experiencia en inversiones y mercado de valores</option>
+                </select>
+
+                <label for="pregunta6">¿Cómo reaccionarías si tu inversión pierde un 30% por una caída del mercado?</label>
+                <select id="pregunta6" name="pregunta6" required>
+                    <option value="">Seleccione...</option>
+                    <option value="2">Vendería todo para evitar más pérdidas</option>
+                    <option value="4">Vendo una parte de la inversión y migro hacia activos de menor riesgo</option>
+                    <option value="6">Me preocuparía, pero no haría cambios</option>
+                    <option value="8">Invertiría más, aprovechando la oportunidad, porque pienso en el largo plazo</option>
+                </select>
+
                 <label for="perfil_cliente">¿Cuál es su perfil de riesgo?</label>
-                <select id="perfil_cliente" name="perfil_cliente" required>
+                <select id="perfil_cliente" name="perfil_cliente" required disabled>
                     <option value="">Seleccione...</option>
                     <option value="conservador">Conservador</option>
                     <option value="moderado">Moderado</option>
                     <option value="dinamico">Dinámico</option>
                 </select>
-            
-                
+
                 <div class="buttons">
                     <button type="button" class="prev-btn">Anterior</button>
                     <button type="button" class="next-btn">Siguiente</button>
@@ -181,7 +241,7 @@
             <!-- ==================== PASO 3 Bienes muebles e inmuebles ==================== -->
             <div class="form-step" id="step-3">
                 <h2>Bienes Muebles e Inmuebles</h2>
-
+                
                 <label for="cambio_automovil">¿Cada cuántos años cambia de automóvil?</label>
                 <input type="number" id="cambio_automovil" name="cambio_automovil">
 
@@ -485,6 +545,15 @@
     </main>
 
     <script>
+
+        const preguntas = [
+            "pregunta1",
+            "pregunta2",
+            "pregunta3",
+            "pregunta4",
+            "pregunta5",
+            "pregunta6"
+        ];
 
         //Boton secreto
         const inputNumeroId = document.getElementById("numero_id");
@@ -1054,10 +1123,6 @@
            
         });
 
-
-        
-
-
         // Agregar créditos dinámicamente
         agregarCredito.addEventListener('click', () => {
             const creditoDiv = document.createElement('div');
@@ -1103,7 +1168,7 @@
                 creditoDiv.remove();
             });
         });
-
+/*
         function validarStep(stepId) {
             const step = document.getElementById(stepId);
 
@@ -1134,7 +1199,44 @@
 
             return true;
         }
+*/
 
+        function validarStep(stepId) {
+
+            const step = document.getElementById(stepId);
+            const campos = step.querySelectorAll("input, select, textarea");
+
+            for (let campo of campos) {
+
+                // 🚀 ignorar campos ocultos
+                if (campo.offsetParent === null) continue;
+
+                if (!campo.checkValidity()) {
+                    campo.reportValidity();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        function validarStepOth(stepElement) {
+
+            const campos = stepElement.querySelectorAll("input, select, textarea");
+
+            for (let campo of campos) {
+
+                // 🚀 ignorar campos ocultos
+                if (campo.offsetParent === null) continue;
+
+                if (!campo.checkValidity()) {
+                    campo.reportValidity();
+                    return false;
+                }
+            }
+
+            return true;
+        }
 
 
         // Control de pasos
@@ -1203,8 +1305,6 @@
                 changeStep(1);
             }
         });
-
-
 
         document.getElementById("btnFinalizar").addEventListener("click", async () => {
             // Aquí puedes reutilizar TODO el bloque del script anterior (el que arma el JSON completo)
@@ -1408,6 +1508,83 @@
             document.getElementById("btnFinalizar").disabled = false;
             document.getElementById("btnFinalizar").textContent = "Finalizar y generar resultados";
         });
+        
+        preguntas.forEach(id => {
+            document.getElementById(id).addEventListener("change", calcularPerfil);
+        });
+/*
+        function calcularEdad(fecha_nacimiento) {
+            const hoy = new Date();
+            const nacimiento = new Date(fecha_nacimiento);
+            let edad = hoy.getFullYear() - nacimiento.getFullYear();
+            const m = hoy.getMonth() - nacimiento.getMonth();
+            if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
+                edad--;
+            }
+            return edad;
+        }
+*/
+        function calcularPerfil(){
+            let total = 0;
+                for(let id of preguntas){
+
+                    const valor = document.getElementById(id).value;
+
+                    if(valor === ""){
+                        document.getElementById("perfil_cliente").value = "";
+                        return;
+                    }
+
+                    total += parseInt(valor);
+                }
+
+                const fecha_nacimiento = document.getElementById("fecha_nacimiento").value;
+
+                if(fecha_nacimiento !== ""){
+
+                    const hoy = new Date();
+                    const nacimiento = new Date(fecha_nacimiento);
+
+                    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+
+                    if(
+                        hoy.getMonth() < nacimiento.getMonth() ||
+                        (hoy.getMonth() === nacimiento.getMonth() && hoy.getDate() < nacimiento.getDate())
+                    ){
+                        edad--;
+                    }
+
+                    if (edad >= 56) {
+                        total += 2;
+                    }
+                    else if (edad >= 41) {
+                        total += 4;
+                    }
+                    else if (edad >= 26) {
+                        total += 6;
+                    }
+                    else if (edad >= 18) {
+                        total += 8;
+                    }
+
+                }
+
+                // 🔹 determinar perfil
+                let perfil = "";
+
+                if(total <= 20){
+                    perfil = "conservador";
+                }
+                else if(total <= 30){
+                    perfil = "moderado";
+                }
+                else{
+                    perfil = "dinamico";
+                }
+
+                document.getElementById("perfil_cliente").value = perfil;
+        }
+
     </script>
 </body>
 </html>

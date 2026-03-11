@@ -59,6 +59,44 @@
 
 </div>
 
+<h3 style="text-align:center; margin-bottom:18px; margin-top: 48px;">
+    Distribución de Inversiones Ideal
+</h3>
+
+<div class="contenedor-tortas-inversion">
+    
+    <div class="grafico-box">
+        <select id="selectorInversion2">
+            <option value="consolidado">Consolidado</option>
+        </select>
+
+        <canvas id="graficoTorta2" width="350" height="350"></canvas>
+
+    </div>
+
+    <div class="tabla-box">
+    
+        <h4 style="text-align:center; margin-bottom:18px;">
+            Perfil: <span id="perfilInversion2">-</span>   
+        </h4>
+        <table class="tabla-resumen">
+            
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Monto</th>
+                    <th>Distribución (%)</th>
+                </tr>
+            </thead>
+            <tbody id="tablaInversionBody2"></tbody>
+        </table>
+    </div>
+
+</div>
+
+
+<div id="recomendacionBox" class="recomendacion-box">
+</div>
 
 <div class="buttons">
     <button type="button" class="prev-btn" onclick="irAnterior()">
@@ -81,6 +119,46 @@
     // ================================
 
     let chartTorta;
+    let chartTorta2;
+
+    const perfilesDistribucion = {
+
+        conservador: {
+            fija: 60.20,
+            variable: 25.80,
+            alternativos: 12.00,
+            cash: 2.00
+        },
+
+        moderado: {
+            fija: 29.20,
+            variable: 43.80,
+            alternativos: 25.00,
+            cash: 2.00
+        },
+
+        dinamico: {
+            fija: 12.60,
+            variable: 50.40,
+            alternativos: 35.00,
+            cash: 2.00
+        }
+
+    };
+
+    function calcularDistribucionIdeal(total, perfil){
+
+        const dist = perfilesDistribucion[perfil];
+
+        return [
+            { label: "Renta fija", valor: total * dist.fija / 100 },
+            { label: "Renta variable", valor: total * dist.variable / 100 },
+            { label: "Alternativos", valor: total * dist.alternativos / 100 },
+            { label: "Cash", valor: total * dist.cash / 100 }
+        ];
+
+    }
+
 
     const resultados =
         JSON.parse(localStorage.getItem("resultados_financieros"));
@@ -91,10 +169,16 @@
 
     //console.log(resultados);
     console.log(resultados.inversiones);
-    console.log(resultados)
+    console.log(resultados.perfil_riesgo);
+
+    document.getElementById("perfilInversion").textContent =
+        resultados.perfil_riesgo.charAt(0).toUpperCase() + resultados.perfil_riesgo.slice(1);
 
     const select = document.getElementById("selectorInversion");
     const tbody = document.getElementById("tablaInversionBody");
+
+    const select2 = document.getElementById("selectorInversion2");
+    const tbody2 = document.getElementById("tablaInversionBody2");
 
 
     resultados.inversiones.forEach((inv, i) => {
@@ -102,6 +186,13 @@
         opt.value = i;
         opt.textContent = "Inversión " + (i + 1);
         select.appendChild(opt);
+    });
+
+    resultados.inversiones.forEach((inv, i) => {
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = "Inversión " + (i + 1);
+        select2.appendChild(opt);
     });
 
 
@@ -129,6 +220,17 @@
         ];
     }
 
+    function procesarIdeal(inv){
+
+        const total = Number(inv.valor);
+
+        return calcularDistribucionIdeal(
+            total,
+            resultados.perfil_riesgo
+        );
+
+    }
+    
     function consolidarInversiones(inversiones) {
 
         let total = {
@@ -154,6 +256,22 @@
             { label: "Cash", valor: total.cash }
         ];
     }
+    
+    function consolidarIdeal(inversiones){
+
+        let total = 0;
+
+        inversiones.forEach(inv=>{
+            total += Number(inv.valor);
+        });
+
+        return calcularDistribucionIdeal(
+            total,
+            resultados.perfil_riesgo
+        );
+
+    }
+
     function actualizarVista() {
 
         let data;
@@ -166,6 +284,67 @@
 
         dibujarTabla(data);
         dibujarTortaChartJS(data);
+
+        let ideal;
+
+        if (select.value === "consolidado") {
+            ideal = consolidarIdeal(resultados.inversiones);
+        } else {
+            ideal = procesarIdeal(resultados.inversiones[select.value]);
+        }
+
+        generarRecomendacion(data, ideal);
+    }
+
+    function actualizarVistaIdeal(){
+
+        let data;
+
+        if (select2.value === "consolidado") {
+
+            data = consolidarIdeal(resultados.inversiones);
+
+        } else {
+
+            data = procesarIdeal(
+                resultados.inversiones[select2.value]
+            );
+
+        }
+
+        dibujarTablaIdeal(data);
+        dibujarTortaIdeal(data);
+
+    }
+    
+    function generarRecomendacion(actual, ideal){
+
+        const box = document.getElementById("recomendacionBox");
+
+        let texto = "<strong>Recomendación de rebalanceo:</strong><br><br>";
+
+        actual.forEach((item,i)=>{
+
+            const diff = ideal[i].valor - item.valor;
+
+            if(Math.abs(diff) < 1) return;
+
+            if(diff > 0){
+
+                texto += `• Incrementar <strong>${item.label}</strong> en aproximadamente ${formatoMoneda(diff)}.<br>`;
+
+            }else{
+
+                texto += `• Reducir <strong>${item.label}</strong> en aproximadamente ${formatoMoneda(Math.abs(diff))}.<br>`;
+
+            }
+
+        });
+
+        texto += "<br>Esta redistribución permitiría alinear la cartera con el perfil de riesgo del cliente.";
+
+        box.innerHTML = texto;
+
     }
 
     function formatoMoneda(valor) {
@@ -195,6 +374,26 @@
         });
     }
 
+    function dibujarTablaIdeal(data) {
+
+        const total = data.reduce((a,b)=>a+b.valor,0);
+
+        tbody2.innerHTML = "";
+
+        data.forEach(item => {
+
+            const porcentaje = (item.valor / total) * 100;
+
+            tbody2.innerHTML += `
+                <tr>
+                    <td>${item.label}</td>
+                    <td style="text-align:center";> ${formatoMoneda(item.valor)}</td>
+                    <td>${porcentaje.toFixed(0)}%</td>
+                </tr>
+            `;
+        });
+    }
+        
     function dibujarTortaChartJS(data) {
         const ctx = document.getElementById('graficoTorta').getContext('2d');
 
@@ -253,12 +452,84 @@
         }
     }
 
+    function dibujarTortaIdeal(data) {
+
+        const ctx = document.getElementById('graficoTorta2').getContext('2d');
+
+        const colores = ["#4CAF50","#2196F3","#FF9800","#9C27B0"];
+
+        const chartData = {
+            labels: data.map(d => d.label),
+            datasets: [{
+                data: data.map(d => d.valor),
+                backgroundColor: colores
+            }]
+        };
+
+        if (chartTorta2) {
+
+            chartTorta2.data = chartData;
+            chartTorta2.update();
+
+        } else {
+
+            chartTorta2 = new Chart(ctx, {
+                type: 'doughnut',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                boxWidth: 15,
+                                boxHeight: 15,
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const valor = context.raw;
+                                    const total = context.chart._metasets[context.datasetIndex].total;
+                                    const porcentaje = (valor / total * 100).toFixed(0);
+                                    return `${context.label}: $ ${valor.toLocaleString()} (${porcentaje}%)`;
+                                }
+                            }
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            top: 5,
+                            bottom: 5   // <- este es el espacio extra entre gráfico y leyenda
+                        }
+                    }
+                }
+            });
+
+        }
+    }
 
 
 
     
     select.addEventListener("change", actualizarVista);
     actualizarVista();
+
+    select2.addEventListener("change", actualizarVistaIdeal);
+    actualizarVistaIdeal();
+
+    function irAnterior() {
+        window.location.href = "/resultados_2";
+    }
+
+    function irSiguiente() {
+        window.location.href = "/resultados_4";
+    }
+
 
 
 </script>

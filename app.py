@@ -314,6 +314,8 @@ def guardar_datos():
             "hijos": lista_hijos,
             "inversiones": lista_inversiones,
 
+            "perfil_riesgo": perfil_riesgo,
+
         }
 
         
